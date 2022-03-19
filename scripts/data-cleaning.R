@@ -22,18 +22,18 @@ gss_variables <-
   c(
     "year",
     "id",
-    "ballot",
-    "consci",
-    "polviews",
-    "partyid",
-    "sex",
-    "ethnic",
+    "age",
     "educ",
     "degree",
-    "realinc",
+    "sex",
+    "race",
     "region",
+    "partyid",
+    "polviews",
     "attend",
-    "age"
+    "consci",
+    "realinc",
+    "cohort"
   )
 
 
@@ -60,26 +60,41 @@ gss <- gss_raw %>%
 glimpse(gss)
 
 
-# Clean "consci" variable -------------------------------------------------
+# Clean variables ---------------------------------------------------------
 
-# I only consider the two cases for the "confidence in science" variable namely
-# whether an individual shares "a great deal" of trust or otherwise.
+# Suppress printed messages
+invisible(capture.output(
+  # A script that cleans and creates relevant variables
+  source("data-transformation.R")))
 
-levels(gss$consci)
-unique(gss$consci)
 
-gss$consci <-
-  # Change factor levels
-  recode_factor(
-    gss$consci,
-    `a great deal` = 1,
-    `only some` = 0,
-    `hardly any` = 0
-  )
+# Reorder variables in data set -------------------------------------------
 
-# Convert factor level to numeric
 gss <- gss %>%
-  mutate(consci = as.numeric(as.character(consci)))
+  select(
+    "year",
+    "id",
+    "consci",
+    "female",
+    "nonwhite",
+    "educ",
+    "highschool",
+    "bachelor",
+    "graduate",
+    "south",
+    "attend",
+    "realinc",
+    "age",
+    "independent",
+    "republican",
+    "moderate",
+    "conservative",
+    "postreagan",
+    "bush",
+    "posttrump",
+    "covid19",
+    "cohort"
+  )
 
 glimpse(gss)
 
@@ -89,22 +104,22 @@ glimpse(gss)
 # For my analysis I simplify political views into three categories: "liberal",
 # "moderate" and "conservative".
 
-levels(gss$polviews)
-unique(gss$polviews)
-
-gss$polviews <-
-  # Change factor levels
-  recode_factor(
-    gss$polviews,
-    `extremely liberal` = "liberal",
-    `slightly liberal` = "liberal",
-    `moderate, middle of the road` = "moderate",
-    `slightly conservative` = "conservative",
-    `extremely conservative` = "conservative"
-  )
-
-levels(gss$polviews)
-unique(gss$polviews)
+# levels(gss$polviews)
+# unique(gss$polviews)
+# 
+# gss$polviews <-
+#   # Change factor levels
+#   recode_factor(
+#     gss$polviews,
+#     `extremely liberal` = "liberal",
+#     `slightly liberal` = "liberal",
+#     `moderate, middle of the road` = "moderate",
+#     `slightly conservative` = "conservative",
+#     `extremely conservative` = "conservative"
+#   )
+# 
+# levels(gss$polviews)
+# unique(gss$polviews)
 
 
 # Save cleaned GSS data ---------------------------------------------------
