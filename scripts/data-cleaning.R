@@ -1,4 +1,4 @@
-# Set working directory to source file location
+# Set working directory to source file location in RStudio
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 # Clear environment
@@ -50,17 +50,19 @@ glimpse(gss_raw)
 
 # Convert variable labels to factors --------------------------------------
 
-gss <- gss_raw %>%
+gss_raw <- gss_raw %>%
   # Convert all labeled columns to factors. Replace all numeric values with
   # label values using 'levels = "l"'.
   # Alternatively, 'levels = "v"' only keeps the values and 'levels = "p"' keeps
   # the labels prefixed with values.
   mutate_if(is.labelled, ~ to_factor(., levels = "l"))
 
-glimpse(gss)
+glimpse(gss_raw)
 
 
 # Clean variables ---------------------------------------------------------
+
+gss <- gss_raw
 
 # Suppress printed messages
 invisible(capture.output(
@@ -99,31 +101,56 @@ gss <- gss %>%
 glimpse(gss)
 
 
-# Clean "polviews" variable -----------------------------------------------
+# Remove records containing missing values --------------------------------
 
-# For my analysis I simplify political views into three categories: "liberal",
-# "moderate" and "conservative".
+# Number of missing values in each column
+sapply(gss, function(x) sum(is.na(x)))
 
-# levels(gss$polviews)
-# unique(gss$polviews)
-# 
-# gss$polviews <-
-#   # Change factor levels
-#   recode_factor(
-#     gss$polviews,
-#     `extremely liberal` = "liberal",
-#     `slightly liberal` = "liberal",
-#     `moderate, middle of the road` = "moderate",
-#     `slightly conservative` = "conservative",
-#     `extremely conservative` = "conservative"
-#   )
-# 
-# levels(gss$polviews)
-# unique(gss$polviews)
+# Total number of observations in data set (with missing values)
+nrow(gss)
+
+# number of observations = 67895
+
+# Omit observations with missing values in all years but 2021
+# Note: The GSS was conduted online in 2021 thus data on race and region is not
+# available. If I drop all records containing NA values, I would drop all 2021
+# records
+gss_pre_2021 <- gss %>%
+  # Select all observations before 2021
+  filter(year < 2021) %>%
+  # Drop all NA values over all columns
+  drop_na()
+
+gss_2021 <- gss %>%
+  # Select all observations of 2021
+  filter(year == 2021) %>%
+  # Drop all NA values over all columns but nonwhite and south
+  drop_na(
+    # Select all columns but nonwhite and south
+    -one_of(c("nonwhite", "south")))
+
+# Number of missing values in each column for gss_pre_2021
+sapply(gss_pre_2021, function(x) sum(is.na(x)))
+
+# Number of missing values in each column for gss_2021
+sapply(gss_2021, function(x) sum(is.na(x)))
+
+# Concatenate or combine gss_pre_2021 and gss_2021 dataframes
+gss <- rbind(gss_pre_2021, gss_2021)
+
+# Total number of observations in data set (without missing values)
+nrow(gss)
+
+# number of observations = 35940
 
 
 # Save cleaned GSS data ---------------------------------------------------
 
 save(gss, file = "../data/gss.RData")
-
 write.csv(gss, file = "../data/gss.csv")
+
+
+# Save raw GSS data -------------------------------------------------------
+
+save(gss_raw, file = "../data/gss-raw.RData")
+write.csv(gss_raw, file = "../data/gss-raw.csv")

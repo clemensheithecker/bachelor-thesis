@@ -211,8 +211,6 @@ unique(gss$age)
 length(unique(gss$age))
 
 gss <- gss %>%
-  # Remove rows with NA values in "age" column
-  filter(!is.na(age)) %>%
   # Remove individuals "89 or older"
   filter(age != "89 or older") %>%
   # Drop unused factor levels (namely "89 or older")
@@ -266,7 +264,7 @@ levels(gss$polviews)
 gss <- gss %>%
   # Create new columns conditional on polviews column
   mutate(
-    moderate = if_else(polviews == "moderate", 1, 0),
+    moderate = if_else(polviews == "moderate, middle of the road", 1, 0),
     conservative = if_else(polviews == "conservative", 1, 0)
   ) %>%
   # Remove "polviews" column

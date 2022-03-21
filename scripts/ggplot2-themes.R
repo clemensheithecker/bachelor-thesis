@@ -1,4 +1,4 @@
-# Set working directory to source file location
+# Set working directory to source file location in RStudio
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 # Clear environment
