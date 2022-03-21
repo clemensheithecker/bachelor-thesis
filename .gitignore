@@ -4,10 +4,10 @@ gss-2021-codebook.pdf
 gss-2021-methodological-primer.pdf
 
 # LaTeX
-.aux
-.log
-.synctex.gz
+*.aux
+*.log
+*.synctex.gz
 
 # R
-.RData
-.Rhistory
+*.RData
+*.Rhistory
