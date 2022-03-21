@@ -7,9 +7,6 @@ rm(list = ls())
 
 # Load libraries ----------------------------------------------------------
 
-# Package has useful function to generate descriptive statistics
-library(psych)
-
 # Create LaTeX code for well-formatted tables
 library(stargazer)
 
