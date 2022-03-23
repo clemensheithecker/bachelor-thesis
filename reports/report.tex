@@ -17,7 +17,16 @@
 \usepackage{booktabs}
 
 % Customize captions of figures and tables
-\usepackage[labelfont=bf, labelsep=period]{caption}
+\usepackage{caption}
+\captionsetup{
+	% Change label font
+	labelfont=bf,
+	% Set label separator
+	labelsep=period,
+	% Justify caption to the left
+	justification=raggedright,
+	singlelinecheck = false
+}
 
 % Make better headers and footers
 \usepackage{fancyhdr}
@@ -28,6 +37,8 @@
 % Place figure and table captions above
 \floatsetup[figure]{style=plaintop}
 \floatsetup[table]{style=plaintop}
+
+\usepackage{tabularx}
 
 % Create graphic elements
 \usepackage{tikz}

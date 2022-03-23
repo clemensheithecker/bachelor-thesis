@@ -118,11 +118,19 @@ print(
       # Add thousands-separator comma mark
       formatC(n_observations, format = "d", big.mark = ","),
       "$)"
-    )
+    ),
+    # Set the alignment of the columns
+    align = c("l", "X", "r", "r", "r", "r"),
+    # Set the number of digits
+    digits = c(0, 0, 3, 3, 0, 0),
+    # Set the format of the columns
+    display = c("s", "s", "f", "f", "f", "f")
   ),
   type = "latex",
   file = "../reports/figures/gss-stats.tex",
   include.rownames = FALSE,
   caption.placement = "top",
   booktabs = TRUE,
+  tabular.environment = "tabularx",
+  width = "\\textwidth"
 )
