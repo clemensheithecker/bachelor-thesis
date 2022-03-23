@@ -134,3 +134,41 @@ print(
   tabular.environment = "tabularx",
   width = "\\textwidth"
 )
+
+# Generate LaTeX output with footnote
+
+footnote <- "{\\it Note:} Add additional information."
+
+# Capture output from xtable
+output <- capture.output(print(
+  xtable(
+    gss_stats,
+    type = "latex",
+    caption = paste0(
+      "Descriptive Statistics, General Social Survey 1974 to 2021 ($N=",
+      # Add thousands-separator comma mark
+      formatC(n_observations, format = "d", big.mark = ","),
+      "$)"
+    ),
+    # Set the alignment of the columns
+    align = c("l", "X", "r", "r", "r", "r"),
+    # Set the number of digits
+    digits = c(0, 0, 3, 3, 0, 0),
+    # Set the format of the columns
+    display = c("s", "s", "f", "f", "f", "f")
+  ),
+  type = "latex",
+  # file = "../reports/figures/gss-stats.tex",
+  include.rownames = FALSE,
+  caption.placement = "top",
+  booktabs = TRUE,
+  tabular.environment = "tabularx",
+  width = "\\textwidth"
+))
+
+# Add footnote
+output[length(output) + 1] <- output[length(output)]
+output[length(output) - 1] <- paste0("\\floatfoot*{", footnote, "}")
+
+# Write to LaTeX file
+write(output, file = "../reports/figures/gss-stats.tex")
