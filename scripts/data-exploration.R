@@ -115,7 +115,8 @@ print(
     type = "latex",
     caption = paste0(
       "Descriptive Statistics, General Social Survey 1974 to 2021 ($N=",
-      n_observations,
+      # Add thousands-separator comma mark
+      formatC(n_observations, format = "d", big.mark = ","),
       "$)"
     )
   ),
