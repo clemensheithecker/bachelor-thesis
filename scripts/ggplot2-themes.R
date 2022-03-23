@@ -146,6 +146,9 @@ theme_thesis_latex <- function() {
       axis.line = element_line(color = "black"),
       
       # Drop vertical major grid line
-      panel.grid.major.y = element_blank()
+      panel.grid.major.y = element_blank(),
+      
+      # Adjust the margins of plot
+      plot.margin = margin(10, 10, 10, 10)
     )
 }
