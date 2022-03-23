@@ -1,20 +1,8 @@
-# Set working directory to source file location in RStudio
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-
-# Clear environment
-rm(list = ls())
-
-
-# Load libraries ----------------------------------------------------------
-
-library(ggplot2)
-
-
 # Standard theme ----------------------------------------------------------
 
 theme_thesis <-
   function(...,
-           base_size = 12,
+           base_size = 10,
            base_family = "Assistant") {
     theme(
       # Change aesthetics of lines
@@ -74,14 +62,6 @@ theme_thesis <-
       
       # Change legend container margins
       legend.margin = margin(
-        t = 4,
-        r = 4,
-        b = 4,
-        l = 4
-      ),
-      
-      # Change legend margins
-      legend.box.margin = margin(
         t = 4,
         r = 4,
         b = 4,
@@ -165,13 +145,7 @@ theme_thesis_latex <- function() {
       # Change axis line color to black
       axis.line = element_line(color = "black"),
       
-      # Add a border to the legend
-      legend.background = element_rect(color = "black"),
-      
       # Drop vertical major grid line
-      panel.grid.major.y = element_blank(),
-      
-      # Add a border to the plot background
-      plot.background = element_rect(color = "black")
+      panel.grid.major.y = element_blank()
     )
 }

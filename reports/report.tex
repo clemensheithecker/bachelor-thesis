@@ -1,0 +1,59 @@
+\documentclass[12pt, a4paper]{report}
+
+% Packages ----------------------------------------------------------------
+
+% Customize page dimensions
+\usepackage{geometry}
+
+% Set page margins and increase height of header
+\geometry{
+	margin=2.5cm,
+	% Show frame for debugging
+	% showframe,
+	headheight=16pt
+}
+
+% Makes tables better
+\usepackage{booktabs}
+
+% Customize captions of figures and tables
+\usepackage[labelfont=bf, labelsep=period]{caption}
+
+% Make better headers and footers
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+% Customize layout of floating environments; I use it for figure footnotes
+\usepackage{floatrow}
+% Place figure and table captions above
+\floatsetup[figure]{style=plaintop}
+\floatsetup[table]{style=plaintop}
+
+% Create graphic elements
+\usepackage{tikz}
+
+% -------------------------------------------------------------------------
+
+% Clear header and footer
+\fancyhead{}
+\fancyfoot{}
+
+% Set custom header and footer
+\fancyhead[L]{Bachelor Thesis}
+\fancyfoot[L]{Clemens S. Heithecker}
+\fancyfoot[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\begin{document}
+
+\include{figures/gss-stats}
+
+\begin{figure}[h]
+	\caption{Unadjusted Means of Public Trust in Science for Each Survey Year by Political Ideology}
+	%\scalebox{.95}{\input{figures/consci-by-polviews-raw}}
+	\input{figures/consci-by-polviews-raw}
+	\floatfoot*{Note: Figure shows three-year moving averages for each group, which smooth the patterns}
+\end{figure}
+
+\end{document}

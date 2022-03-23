@@ -7,7 +7,11 @@ rm(list = ls())
 
 # Load libraries ----------------------------------------------------------
 
+# Manipulate metadata as variable and value labels
+library(labelled)
+
 library(tidyverse)
+options(dplyr.summarise.inform = FALSE)
 
 # A graphic device which supports custom fonts
 library(ragg)
@@ -109,107 +113,121 @@ consci_by_polviews_raw <- gss_raw %>%
 
 # Figure 1: Trust in science by political ideology ------------------------
 
-plot_consci_polviews <- function(
-  data,
-  # Set default output_name to the variable name of data
-  output_name = gsub("_", "-", deparse(substitute(data)))) {
-  
+consci_polviews <- function(data) {
   ggplot(
     data = data,
-    aes(
+    mapping = aes(
       x = year,
-      y = consci_moving_mean,
+      y  = consci_moving_mean,
+      group = polviews,
       color = polviews
     )
   ) +
     # Add line plot
-    geom_line(size = 1.2) +
+    geom_line(size = 1.1) +
     # Change the spacing of the x-axis tick marks
     scale_x_continuous(breaks = seq(from = 1974, to = 2022, by = 4)) +
-    # Change the y-axis scale to percent
+    # Cahgne the y-axis scale to percent
     scale_y_continuous(label = scales::percent_format(accuracy = 1)) +
     # Change the scale limits of the y-axis
-    coord_cartesian(expand = TRUE,
-                    clip = "off",
-                    ylim = c(0.3, 0.7)) +
+    coord_cartesian(ylim = c(0.3, 0.7)) +
     # Set the colors for the different groups
     scale_color_manual(values = c("#E63946", "#1D3557", "#A8DADC")) +
-    # Set the titles and axis labels
+    # Set the axis labels
     labs(
-      title = "Public Trust in Science for Each Survey Year by Political Ideology",
-      subtitle = "Three-period moving averages for each group to smooth the patterns overtime",
       x = "Year",
-      y = "Trust in Science (Unadjusted Means)"
+      y = "Trust in Science (Unadjusted Means)",
+      title = "Public Trust in Science for Each Survey Year by Political Ideology",
+      subtitle = "Three-period moving averages for each group to smooth the patterns overtime"
     ) +
     # Make the legend keys wider
     guides(color = guide_legend(keywidth = 3)) +
-    # Use my custom thesis theme
     theme_thesis()
-  
-  # Save figure as PNG file
-  ggsave(
-    paste0("../figures/", output_name, ".png"),
-    device = agg_png,
-    res = 300,
-    width = 24,
-    height = 16,
-    units = "cm"
-  )
-  
-  # Close the current plotting device
-  dev.off()
-  
 }
 
-plot_consci_polviews(consci_by_polviews)
-plot_consci_polviews(consci_by_polviews_raw)
+consci_by_polviews %>%
+  consci_polviews()
+
+ggsave(
+  "../figures/consci-by-polviews.png",
+  device = agg_png,
+  res = 300,
+  width = 16,
+  height = 3 / 4 * 16,
+  units = "cm"
+)
+
+# Close the AGG PNG graphic device
+dev.off()
+
+consci_by_polviews_raw %>%
+  consci_polviews()
+
+ggsave(
+  "../figures/consci-by-polviews-raw.png",
+  device = agg_png,
+  res = 300,
+  width = 16,
+  height = 3 / 4 * 16,
+  units = "cm"
+)
+
+# Close the AGG PNG graphic device
+dev.off()
 
 
 # Figure 1 (LaTeX): Trust in science by political ideology ----------------
 
-plot_consci_polviews_latex <- function(
-  data,
-  # Set default output_name to the variable name of data
-  output_name = gsub("_", "-", deparse(substitute(data)))) {
-  
-  tikz(
-    paste0("../figures/", output_name, ".tex"),
-    width = 8.75,
-    height = 5)
-  
+consci_polviews_latex <- function(data) {
   ggplot(
     data = data,
-    aes(
+    mapping = aes(
       x = year,
-      y = consci_moving_mean,
-      color = polviews,
-      linetype = polviews,
-      shape = polviews
+      y  = consci_moving_mean,
+      group = polviews,
+      color = polviews
     )
   ) +
     # Add line plot
-    geom_line(size = 0.8) +
+    geom_line(mapping = aes(linetype = polviews)) +
     # Add data points
-    geom_point(size = 2.4) +
+    geom_point(mapping = aes(shape = polviews)) +
     # Change the spacing of the x-axis tick marks
     scale_x_continuous(breaks = seq(from = 1974, to = 2022, by = 4)) +
+    # Cahgne the y-axis scale to percent
+    scale_y_continuous(label = scales::percent_format(accuracy = 1)) +
     # Change the scale limits of the y-axis
-    coord_cartesian(expand = TRUE,
-                    clip = "off",
-                    ylim = c(0.3, 0.7)) +
+    coord_cartesian(ylim = c(0.3, 0.7)) +
     # Set the colors for the different groups using a gray scale
     scale_color_grey(start = 0, end = 0.4) +
     # Set the axis labels
-    labs(x = "Year", y = "Trust in Science (Unadjusted Means)") +
+    labs(x = "Year",
+         y = "Trust in Science (Unadjusted Means)") +
     # Make the legend keys wider
     guides(color = guide_legend(keywidth = 3)) +
-    # Use my custom thesis LaTeX theme
     theme_thesis_latex()
-  
-  # Close the current plotting device
-  dev.off()
-  
 }
 
-plot_consci_polviews_latex(consci_by_polviews)
-plot_consci_polviews_latex(consci_by_polviews_raw)
+tikz(
+  "../reports/figures/consci-by-polviews.tex",
+  width = 0.95 * 16 / 2.54,
+  height = 0.95 * 3 / 4 * 16 / 2.54,
+  sanitize = TRUE)
+
+consci_by_polviews %>%
+  consci_polviews_latex()
+
+# Close the tikz graphics device
+dev.off()
+
+tikz(
+  "../reports/figures/consci-by-polviews-raw.tex",
+  width = 0.95 * 16 / 2.54,
+  height = 0.95 * 3 / 4 * 16 / 2.54,
+  sanitize = TRUE)
+
+consci_by_polviews_raw %>%
+  consci_polviews_latex()
+
+# Close the tikz graphics device
+dev.off()

@@ -12,8 +12,8 @@ library(stargazer)
 
 library(tidyverse)
 
-# Output variable documentation
-library(vtable)
+# Export data frame as LaTeX table
+library(xtable)
 
 
 # Load data ---------------------------------------------------------------
@@ -103,25 +103,25 @@ gss_stats$Variable[gss_stats$Variable == "covid19"] <- "COVID-19"
 gss_stats$Variable[gss_stats$Variable == "cohort"] <- "Cohort"
 
 
-
 # Convert data frame to LaTeX table ---------------------------------------
 
 # Number of observations
 n_observations = nrow(gss)
 
 # Generate LaTeX output
-
-stargazer(
-  gss_stats,
-  type = "latex",
-  title = paste0(
-    "Descriptive Statistics, General Social Survey 1974 to 2021 ($N=",
-    n_observations,
-    "$)"
+print(
+  xtable(
+    gss_stats,
+    type = "latex",
+    caption = paste0(
+      "Descriptive Statistics, General Social Survey 1974 to 2021 ($N=",
+      n_observations,
+      "$)"
+    )
   ),
-  out = "../reports/gss-stats.tex",
-  out.header = TRUE,
-  summary = FALSE,
-  align = TRUE,
-  rownames = FALSE
+  type = "latex",
+  file = "../reports/figures/gss-stats.tex",
+  include.rownames = FALSE,
+  caption.placement = "top",
+  booktabs = TRUE,
 )
