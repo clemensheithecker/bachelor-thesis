@@ -138,7 +138,7 @@ print(
 # Generate LaTeX output with footnote
 
 footnote <-
-  "{\\it Note:} The original age variable was decreased by a factor of 10."
+  "{\\it Note:} Family income is measured in constant dollars ($\\text{base}=1986$) and was z-score standardized. The original age variable was decreased by a factor of 10."
 
 # Capture output from xtable
 output <- capture.output(print(
@@ -154,7 +154,7 @@ output <- capture.output(print(
     # Set the alignment of the columns
     align = c("l", "X", "r", "r", "r", "r"),
     # Set the number of digits
-    digits = c(0, 0, 3, 3, 0, 0),
+    digits = c(0, 0, 3, 3, 3, 3),
     # Set the format of the columns
     display = c("s", "s", "f", "f", "f", "f")
   ),
@@ -166,6 +166,9 @@ output <- capture.output(print(
   tabular.environment = "tabularx",
   width = "\\textwidth"
 ))
+
+# Remove unnecessary decimal points
+output <- gsub(".000", "", output)
 
 # Add footnote
 output[length(output) + 1] <- output[length(output)]

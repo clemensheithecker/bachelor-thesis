@@ -203,6 +203,15 @@ glimpse(gss)
 var_label(gss$attend) <- "how often r attends religious services dummy"
 
 
+# Transform "realinc" variable --------------------------------------------
+
+# Standardize the z-scores of family income.
+
+gss <- gss %>%
+  # Scale "realinc" to have mean = 0 and standard deviation = 1
+  mutate(realinc = scale(realinc))
+
+
 # Transform "age" variable ------------------------------------------------
 
 glimpse(gss)
