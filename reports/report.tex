@@ -1,9 +1,13 @@
-\documentclass[12pt, a4paper]{report}
+\documentclass[12pt, a4paper]{article}
 
 % Packages ----------------------------------------------------------------
 
 % Enhance the structure and output of math formulas
 \usepackage{amsmath}
+
+% Bibliography management
+\usepackage[backend=biber, style=apa]{biblatex}
+\addbibresource{references.bib}
 
 % Customize page dimensions
 \usepackage{geometry}
@@ -59,9 +63,20 @@
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0.4pt}
 
+% Remove paragraph indentation
+\setlength{\parindent}{0pt}
+
+% Start every section on a new page
+\let\stdsection\section
+\renewcommand\section{\newpage\stdsection}
+
 \begin{document}
 
-\include{figures/gss-stats}
+\section*{Analysis}
+
+This paper is an extension to \cite{gauchat_politicization_2012}.
+
+\input{figures/gss-stats}
 
 \begin{figure}[h]
 	\caption{Unadjusted Means of Public Trust in Science for Each Survey Year by Political Ideology}
@@ -69,5 +84,9 @@
 	\input{figures/consci-by-polviews-raw}
 	\floatfoot*{{\it Note:} Figure shows three-year moving averages for each group, which smooth the patterns}
 \end{figure}
+
+\clearpage
+
+\printbibliography
 
 \end{document}

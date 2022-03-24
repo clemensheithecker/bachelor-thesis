@@ -3,6 +3,13 @@ gss-2021.dta
 gss-2021-codebook.pdf
 gss-2021-methodological-primer.pdf
 
+# Bibliography
+*.bbl
+*.bcf
+*.blg
+*.dvi
+*.run.xml
+
 # LaTeX
 *.aux
 *.log
