@@ -216,7 +216,9 @@ gss <- gss %>%
   # Drop unused factor levels (namely "89 or older")
   mutate(age = droplevels(age)) %>%
   # Convert factor level to numeric
-  mutate(age = as.numeric(as.character(age)))
+  mutate(age = as.numeric(as.character(age))) %>%
+  # Divide "age" by 10
+  mutate(age = age / 10)
 
 length(unique(gss$age))
 

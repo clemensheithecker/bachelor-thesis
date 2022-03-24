@@ -137,7 +137,8 @@ print(
 
 # Generate LaTeX output with footnote
 
-footnote <- "{\\it Note:} Add additional information."
+footnote <-
+  "{\\it Note:} The original age variable was decreased by a factor of 10."
 
 # Capture output from xtable
 output <- capture.output(print(
