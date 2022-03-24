@@ -182,14 +182,14 @@ levels(gss$attend)
 gss$attend <- recode_factor(
   gss$attend,
   `never` = 0,
-  `less than once a year` = 0,
-  `about once or twice a year` = 0,
-  `several times a year` = 0,
-  `about once a month` = 0,
-  `2-3 times a year` = 0,
-  `nearly every week` = 1,
-  `every week` = 1,
-  `several times a week` = 1)
+  `less than once a year` = 1,
+  `about once or twice a year` = 2,
+  `2-3 times a year` = 3,
+  `several times a year` = 4,
+  `about once a month` = 5,
+  `nearly every week` = 6,
+  `every week` = 7,
+  `several times a week` = 8)
 
 levels(gss$attend)
 
