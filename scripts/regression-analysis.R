@@ -71,6 +71,12 @@ reg3_margins <- margins(reg3)
 
 export_summs(reg2_margins, reg3_margins, to.file = "html")
 
+reg2_margins_liberal <- margins(reg2,
+                                at = list(moderate = 0, conservative = 0))
+reg3_margins_liberal <- margins(reg3,
+                                at = list(moderate = 0, conservative = 0))
+
+export_summs(reg2_margins_liberal, reg3_margins_liberal, to.file = "html")
 
 reg4 <- glmer(consci ~ . + moderate * year + conservative * year +
                 postreagan * moderate + bush * moderate +
