@@ -62,8 +62,6 @@ glimpse(gss_raw)
 
 # Clean variables ---------------------------------------------------------
 
-gss <- gss_raw
-
 # Suppress printed messages
 invisible(capture.output(
   # A script that cleans and creates relevant variables
@@ -72,7 +70,7 @@ invisible(capture.output(
 
 # Reorder variables in data set -------------------------------------------
 
-gss <- gss %>%
+gss_raw <- gss_raw %>%
   select(
     "year",
     "id",
@@ -98,10 +96,12 @@ gss <- gss %>%
     "cohort"
   )
 
-glimpse(gss)
+glimpse(gss_raw)
 
 
 # Remove records containing missing values --------------------------------
+
+gss <- gss_raw
 
 # Number of missing values in each column
 sapply(gss, function(x) sum(is.na(x)))
@@ -142,6 +142,9 @@ gss <- rbind(gss_pre_2021, gss_2021)
 nrow(gss)
 
 # number of observations = 35940
+
+# Remove temporary data frames
+rm(gss_pre_2021, gss_2021)
 
 
 # Save cleaned GSS data ---------------------------------------------------
