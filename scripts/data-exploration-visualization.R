@@ -138,7 +138,7 @@ plot_missing_values_pct <- missing_values %>%
   scale_fill_manual(labels = c("pct_missing_values" = "Missing",
                                "pct_present_values" = "Present"),
                     values = c("pct_missing_values" = "#262626",
-                               "pct_present_values" = "#D4D4D4")) +
+                               "pct_present_values" = "#E5E5E5")) +
   labs(
     x = "",
     y = "",
@@ -168,6 +168,107 @@ ggsave(
   res = 300,
   width = 16,
   height = 3 / 4 * 16,
+  units = "cm"
+)
+
+# Close the AGG PNG graphic device
+dev.off()
+
+
+## Distributions of entries with missing income values --------------------
+
+head(gss_raw)
+
+distribution_na <- gss_raw %>%
+  filter(is.na(realinc)) %>%
+  select(-year,
+         -id,
+         -educ,
+         -attend,
+         -realinc,
+         -age,
+         -postreagan,
+         -bush,
+         -posttrump,
+         -covid19,
+         -cohort) %>%
+  gather(
+    key = variable,
+    value = value,
+    factor_key = TRUE
+  )
+
+distribution <- gss %>%
+  select(-year,
+         -id,
+         -educ,
+         -attend,
+         -realinc,
+         -age,
+         -postreagan,
+         -bush,
+         -posttrump,
+         -covid19,
+         -cohort) %>%
+  gather(
+    key = variable,
+    value = value,
+    factor_key = TRUE
+  )
+
+plot_missing_values_distributions <- ggplot() +
+  geom_bar(
+    data = distribution,
+    mapping = aes(x = value,
+                  y = (..count..) / sum(..count..),
+                  color = "Data Without Missing Values",
+                  linetype = "Data Without Missing Values",
+                  fill = "Data Without Missing Values"),
+    # fill = NA,
+    width = 1) +
+  geom_bar(
+    data = distribution_na,
+    mapping = aes(x = value,
+                  y = (..count..) / sum(..count..),
+                  color = "Data With Missing Income Values",
+                  linetype = "Data With Missing Income Values",
+                  fill = "Data With Missing Income Values"),
+    # fill = NA,
+    width = 1) +
+  facet_wrap(~variable, scales = "free") +
+  scale_x_continuous(breaks = c(0, 1)) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_color_manual(values = c("Data Without Missing Values" = "#737373",
+                                "Data With Missing Income Values" = "#262626")) +
+  scale_linetype_manual(values = c("Data Without Missing Values" = "dashed",
+                                   "Data With Missing Income Values" = "solid")) +
+  scale_fill_manual(values = alpha(c("Data Without Missing Values" = "#E5E5E5",
+                               "Data With Missing Income Values" = "#737373"), 0.2)) +
+  labs(
+    x = "Value",
+    y = "Proportion in Sample",
+    title = "Data Without Missing Values vs. Data with Missing Income Values",
+    subtitle = "Plot only shows binary dummy variables",
+    # Merge legends by giving them the same name
+    color = "Legend",
+    linetype = "Legend",
+    fill = "Legend"
+  ) +
+  theme_thesis() +
+  theme(
+    # Remove horizontal grid lines
+    panel.grid.major.y = element_blank()
+  )
+
+plot_missing_values_distributions
+
+ggsave(
+  filename = "../figures/missing-values-distributions.png",
+  plot = plot_missing_values_distributions,
+  device = agg_png,
+  res = 300,
+  width = 16,
+  height = 5 / 4 * 16,
   units = "cm"
 )
 

@@ -119,6 +119,12 @@ theme_thesis <-
       # Adjust the margins of plot
       plot.margin = margin(24, 24, 24, 24),
       
+      # Remove background of facet labels
+      strip.background = element_rect(fill = NA),
+      
+      # Change facet label text
+      strip.text = element_text(color = "black", size = base_size),
+      
       ...
     )
   }
