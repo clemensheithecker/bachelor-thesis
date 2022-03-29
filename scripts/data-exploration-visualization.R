@@ -58,7 +58,7 @@ plot_missing_values_n <- missing_values %>%
   ggplot(mapping = aes(
     x = reorder(variable, desc(n_missing_values)),
     y = n_missing_values)) +
-  geom_col() +
+  geom_col(fill = "#262626") +
   geom_text(mapping = aes(label = formatC(
     n_missing_values, format = "d", big.mark = ",")), hjust = -0.125) +
   # Reverse the order of the y-column
@@ -110,15 +110,35 @@ dev.off()
 
 plot_missing_values_pct <- missing_values %>%
   filter(n_missing_values > 0) %>%
-  ggplot(mapping = aes(
-    x = pct_missing_values,
-    y = reorder(variable, desc(pct_missing_values)))) +
-  geom_col() +
-  geom_text(mapping = aes(label = scales::percent(pct_missing_values)),
+  # Change order of columns (not necessary for plotting)
+  arrange(desc(pct_missing_values)) %>%
+  # Change order of factor levels
+  mutate(variable = fct_reorder(variable,
+                                pct_missing_values,
+                                .desc = TRUE)) %>%
+  mutate(pct_present_values = 1 - pct_missing_values) %>%
+  gather(
+    key = measure,
+    value = value,
+    pct_missing_values:pct_present_values,
+    factor_key = TRUE
+  ) %>%
+  ggplot(mapping = aes(x = value, y = variable)) +
+  geom_col(
+    mapping = aes(fill = measure),
+    # Reverse the fill order so that missing values go first
+    position = position_stack(reverse = TRUE)
+  ) +
+  geom_text(mapping = aes(label = ifelse(measure == "pct_missing_values",
+                                         scales::percent(value, accuracy = 0.1),
+                                         "")),
             hjust = -0.125) +
   scale_y_discrete(limits = rev) +
   scale_x_continuous(labels = scales::percent) +
-  expand_limits(x = 0.43) +
+  scale_fill_manual(labels = c("pct_missing_values" = "Missing",
+                               "pct_present_values" = "Present"),
+                    values = c("pct_missing_values" = "#262626",
+                               "pct_present_values" = "#D4D4D4")) +
   labs(
     x = "",
     y = "",
