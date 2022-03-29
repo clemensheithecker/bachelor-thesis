@@ -224,7 +224,6 @@ plot_missing_values_distributions <- ggplot() +
                   color = "Data Without Missing Values",
                   linetype = "Data Without Missing Values",
                   fill = "Data Without Missing Values"),
-    # fill = NA,
     width = 1) +
   geom_bar(
     data = distribution_na,
@@ -233,9 +232,9 @@ plot_missing_values_distributions <- ggplot() +
                   color = "Data With Missing Income Values",
                   linetype = "Data With Missing Income Values",
                   fill = "Data With Missing Income Values"),
-    # fill = NA,
     width = 1) +
-  facet_wrap(~variable, scales = "free") +
+  facet_wrap(~variable, scales = "free", nrow = 2) +
+  # facet_wrap(~variable, scales = "free") +
   scale_x_continuous(breaks = c(0, 1)) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
   scale_color_manual(values = c("Data Without Missing Values" = "#737373",
@@ -263,12 +262,14 @@ plot_missing_values_distributions <- ggplot() +
 plot_missing_values_distributions
 
 ggsave(
-  filename = "../figures/missing-values-distributions.png",
+  filename = "../figures/missing-values-distributions-wide.png",
   plot = plot_missing_values_distributions,
   device = agg_png,
   res = 300,
-  width = 16,
-  height = 5 / 4 * 16,
+  width = 16 * 4 / 3,
+  # width = 16,
+  height = 3 / 4 * 16,
+  # height = 5 / 4 * 16,
   units = "cm"
 )
 
