@@ -18,7 +18,7 @@ library(xtable)
 # Load data ---------------------------------------------------------------
 
 load("../data/gss.RData")
-load("../data/gss-raw.RData")
+load("../data/gss_with_na.RData")
 
 
 # Create summary statistics -----------------------------------------------
@@ -27,10 +27,10 @@ summary_stats <- function(df, binary_dummies, variable_names) {
   df_stats <- df %>%
     # Calculate summary statistics
     summarise_all(list(
-      Mean = ~mean(., na.rm = TRUE),
-      SD = ~sd(., na.rm = TRUE),
-      Min = ~min(., na.rm = TRUE),
-      Max = ~max(., na.rm = TRUE)
+      Mean = ~ mean(., na.rm = TRUE),
+      SD = ~ sd(., na.rm = TRUE),
+      Min = ~ min(., na.rm = TRUE),
+      Max = ~ max(., na.rm = TRUE)
     )) %>%
     # Reshape data frame from wide to long format
     gather(key = "Variable", value = "Value") %>%
@@ -167,7 +167,7 @@ gss_stats_2010 <- gss %>%
   )
 
 # Summary statistics for 1974-2010 (only missing values for income)
-gss_stats_2010_na <- gss_raw %>%
+gss_stats_2010_na <- gss_with_na %>%
   # Select all rows containing missing values for income up to and including
   # the year 2010
   filter(year <= 2010, is.na(realinc)) %>%
@@ -292,7 +292,7 @@ summary_stats_to_latex(
 # Summary statistics for 1974-2010 (only missing values for income)
 
 # Number of observations
-n_obs_2010_na = nrow(gss_raw %>%
+n_obs_2010_na = nrow(gss_with_na %>%
                        filter(year <= 2010, is.na(realinc)) %>%
                        drop_na(-realinc))
 

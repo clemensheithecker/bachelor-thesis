@@ -13,9 +13,6 @@ library(haven)
 # Manipulate metadata as variable and value labels
 library(labelled)
 
-# A graphic device which supports custom fonts
-library(ragg)
-
 library(tidyverse)
 
 
@@ -69,114 +66,10 @@ gss_raw <- gss_raw %>%
 glimpse(gss_raw)
 
 
-# Understanding missing values --------------------------------------------
-
-missing_values_summary <- gss_raw %>%
-  group_by(year) %>%
-  summarise(
-    across(everything(), ~ sum(is.na(.x))),
-    n = n()
-  ) %>%
-  ungroup() %>%
-  # Divide all columns but `year` and `n` by `n`
-  mutate(across(-c(year, n), ~ .x / n)) %>%
-  # Add "_fraction" suffix to all columns but `year` and `n`
-  rename_with(~ paste0(., "_fraction_na"), - c(year, n))
-
-head(missing_values_summary)
-glimpse(missing_values_summary)
-
-
-missing_values_summary_long <- missing_values_summary %>%
-  select(-n) %>%
-  rename_all( ~ stringr::str_replace(., "_fraction_na", "")) %>%
-  pivot_longer(!year, names_to = "variable", values_to = "fraction_missing") %>%
-  mutate(fraction_present = 1 - fraction_missing) %>%
-  pivot_longer(
-    !c(year, variable),
-    names_to = "measure",
-    values_to = "fraction"
-  )
-
-
-missing_values_summary_plot <- function(df, filename, title) {
-  plot <- df %>%
-    ggplot(mapping = aes(x = fraction, y = variable)) +
-    geom_col(
-      mapping = aes(fill = measure),
-      position = position_stack(reverse = TRUE)
-    ) +
-    geom_text(
-      mapping = aes(label = ifelse(measure == "fraction_missing",
-                                   scales::percent(fraction, accuracy = 0.1),
-                                   ""),
-                    hjust = ifelse(measure == "fraction_missing" &
-                                     fraction > 0.7,
-                                   1.125,
-                                   -0.125),
-                    color = ifelse(measure == "fraction_missing" &
-                                     fraction > 0.7,
-                                   "white",
-                                   "black")
-      ),
-    ) +
-    facet_wrap(~ year, ncol = 4) +
-    scale_y_discrete(limits = rev) +
-    scale_x_continuous(labels = scales::percent) +
-    scale_color_manual(values = c("white" = "#ffffff",
-                                  "black" = "#000000"),
-                       guide = "none") +
-    scale_fill_manual(labels = c("fraction_missing" = "Missing",
-                                 "fraction_present" = "Present"),
-                      values = c("fraction_missing" = "#262626",
-                                 "fraction_present" = "#E5E5E5")) +
-    labs(
-      x = "",
-      y = "",
-      title = title
-    ) +
-    theme_thesis() +
-    theme(
-      axis.title.x = element_blank(),
-      axis.title.y = element_blank(),
-      panel.grid.major.y = element_blank()
-    )
-  
-  ggsave(
-    filename = filename,
-    plot = plot,
-    device = agg_png,
-    res = 300,
-    width = 16 * 1.5,
-    height = 3 / 4 * 16 * 1.5,
-    units = "cm"
-  )
-}
-
-
-missing_values_summary_long %>%
-  filter(year <= 1985) %>%
-  missing_values_summary_plot(
-    filename = "../figures/missing-values-summary-plot-1.png",
-    title = "Fraction of Missing Values (1)"
-  )
-
-missing_values_summary_long %>%
-  filter(year > 1985 & year <= 2002) %>%
-  missing_values_summary_plot(
-    filename = "../figures/missing-values-summary-plot-2.png",
-    title = "Fraction of Missing Values (2)"
-  )
-
-missing_values_summary_long %>%
-  filter(year > 2002) %>%
-  missing_values_summary_plot(
-    filename = "../figures/missing-values-summary-plot-3.png",
-    title = "Fraction of Missing Values (3)"
-  )
-
-
 # Clean variables ---------------------------------------------------------
+
+# Transformed data with missing values
+gss_with_na <- gss_raw
 
 # Suppress printed messages
 invisible(capture.output(
@@ -186,7 +79,7 @@ invisible(capture.output(
 
 # Reorder variables in data set -------------------------------------------
 
-gss_raw <- gss_raw %>%
+gss_with_na <- gss_with_na %>%
   select(
     "year",
     "id",
@@ -212,12 +105,12 @@ gss_raw <- gss_raw %>%
     "cohort"
   )
 
-glimpse(gss_raw)
+glimpse(gss_with_na)
 
 
 # Remove records containing missing values --------------------------------
 
-gss <- gss_raw
+gss <- gss_with_na
 
 # Number of missing values in each column
 sapply(gss, function(x) sum(is.na(x)))
@@ -267,6 +160,12 @@ rm(gss_pre_2021, gss_2021)
 
 save(gss, file = "../data/gss.RData")
 write.csv(gss, file = "../data/gss.csv")
+
+
+# Save transformed GSS data with missing values ---------------------------
+
+save(gss_with_na, file = "../data/gss-with-na.RData")
+write.csv(gss_with_na, file = "../data/gss-with-na.csv")
 
 
 # Save raw GSS data -------------------------------------------------------

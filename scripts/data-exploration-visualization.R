@@ -29,15 +29,15 @@ source("ggplot2-themes.R")
 # Load data ---------------------------------------------------------------
 
 load("../data/gss.RData")
-load("../data/gss-raw.RData")
+load("../data/gss-with-na.RData")
 
-glimpse(gss_raw)
+glimpse(gss_with_na)
 
 
 # Missing values ----------------------------------------------------------
 
 # Count number of missing values for each attribute as a list
-missing_values <- as.list(colSums(is.na(gss_raw))) %>%
+missing_values <- as.list(colSums(is.na(gss_with_na))) %>%
   # Convert the list to a dataframe
   stack(.) %>%
   # Set the column names
@@ -45,10 +45,10 @@ missing_values <- as.list(colSums(is.na(gss_raw))) %>%
   # Reorder columns
   select(variable, n_missing_values) %>%
   # Add fraction column
-  mutate(pct_missing_values = round(n_missing_values / nrow(gss_raw),
+  mutate(pct_missing_values = round(n_missing_values / nrow(gss_with_na),
                                          digits = 3))
 
-n_obs_2021 <- nrow(gss_raw %>% filter(year == 2021))
+n_obs_2021 <- nrow(gss_with_na %>% filter(year == 2021))
 
 
 ## Missing values count ---------------------------------------------------
@@ -72,7 +72,7 @@ plot_missing_values_n <- missing_values %>%
     title = "Number of Missing Values",
     subtitle = paste(
       "Plot only shows variables with missing values\n(Total number of observations:",
-      formatC(nrow(gss_raw), format = "d", big.mark = ","),
+      formatC(nrow(gss_with_na), format = "d", big.mark = ","),
       ")"
     ),
     caption = paste(
@@ -177,9 +177,9 @@ dev.off()
 
 ## Distributions of entries with missing income values --------------------
 
-head(gss_raw)
+head(gss_with_na)
 
-distribution_na <- gss_raw %>%
+distribution_na <- gss_with_na %>%
   filter(is.na(realinc)) %>%
   select(-year,
          -id,
@@ -237,12 +237,19 @@ plot_missing_values_distributions <- ggplot() +
   # facet_wrap(~variable, scales = "free") +
   scale_x_continuous(breaks = c(0, 1)) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-  scale_color_manual(values = c("Data Without Missing Values" = "#737373",
-                                "Data With Missing Income Values" = "#262626")) +
-  scale_linetype_manual(values = c("Data Without Missing Values" = "dashed",
-                                   "Data With Missing Income Values" = "solid")) +
-  scale_fill_manual(values = alpha(c("Data Without Missing Values" = "#E5E5E5",
-                               "Data With Missing Income Values" = "#737373"), 0.2)) +
+  scale_color_manual(
+    values = c("Data Without Missing Values" = "#737373",
+               "Data With Missing Income Values" = "#262626")
+  ) +
+  scale_linetype_manual(
+    values = c("Data Without Missing Values" = "dashed",
+               "Data With Missing Income Values" = "solid")
+  ) +
+  scale_fill_manual(
+    values = alpha(c("Data Without Missing Values" = "#E5E5E5",
+                     "Data With Missing Income Values" = "#737373"),
+                   0.2)
+  ) +
   labs(
     x = "Value",
     y = "Proportion in Sample",
@@ -311,26 +318,26 @@ var_label(consci_by_polviews$polviews) <-
   "think of self as liberal or conservative"
 
 
-## Data selection from gss_raw --------------------------------------------
+## Data selection from gss_with_na ----------------------------------------
 
 # Change factor levels of consci
-gss_raw$consci <-
+gss_with_na$consci <-
   recode_factor(
-    gss_raw$consci,
+    gss_with_na$consci,
     `a great deal` = 1,
     `only some` = 0,
     `hardly any` = 0
   )
 
 # Convert factor level to numeric
-gss_raw <- gss_raw %>%
+gss_with_na <- gss_with_na %>%
   # Convert factor level to numeric
   mutate(consci = as.numeric(as.character(consci)))
 
-gss_raw$polviews <-
+gss_with_na$polviews <-
   # Change factor levels
   recode_factor(
-    gss_raw$polviews,
+    gss_with_na$polviews,
     `slightly conservative` = "Conservative",
     `conservative` = "Conservative",
     `extremely conservative` = "Conservative",
@@ -340,7 +347,7 @@ gss_raw$polviews <-
     `moderate, middle of the road` = "Moderate"
   )
 
-consci_by_polviews_raw <- gss_raw %>%
+consci_by_polviews_raw <- gss_with_na %>%
   # Select relevant columns
   select(year, consci, polviews) %>%
   # Drop all records containing null values

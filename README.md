@@ -1,10 +1,18 @@
 # Bachelor Thesis Clemens Heithecker
 
-The effect of political ideology on the trust in science in the United States.
+The effect of political ideology on the trust in science in the United States. The data used in this analysis comes from the General Social Survey (GSS) from 1972 to 2021 (Davern et al. 2021).
 
 ## Data Loading and Cleaning
 
-To load the data, run the script [data-cleaning.R](scripts/data-cleaning.R) which extracts the relevant varaibles from the General Social Survey (GSS) 2021 data file. In addition, the script transforms the raw data and creates relevant variables. Finally, it exports the raw dataset as `gss-raw` and the transformed dataset as `gss` in the [data](data) directory, both as CSV and RData files.
+To load the data, run the script [data-cleaning.R](scripts/data-cleaning.R) which extracts the relevant varaibles from the General Social Survey (GSS) 2021 data file. The script transforms the raw data and exports it into the [/data](data) directory, both as CSV and RData files.
+
+I created three different datasets:
+
+| Name          | Description                                        |
+| ------------- | -------------------------------------------------- |
+| `gss_raw`     | All relevant variables with data type adjustments. |
+| `gss_with_na` | Transformed data _with_ missing values.            |
+| `gss`         | Transformed data _without_ missing values.         |
 
 ## References
 
