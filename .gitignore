@@ -16,5 +16,5 @@ gss-2021-methodological-primer.pdf
 *.synctex.gz
 
 # R
-*.RData
-*.Rhistory
+.RData
+.Rhistory
