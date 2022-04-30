@@ -18,7 +18,225 @@ library(xtable)
 # Load data ---------------------------------------------------------------
 
 load("../data/gss.RData")
-load("../data/gss_with_na.RData")
+load("../data/gss-with-na.RData")
+load("../data/gss-raw.RData")
+
+
+# Summary statistics: confidence in scientific community ------------------
+
+# Check for tagged missing values
+unique(print_tagged_na(gss_raw$consci))
+
+# Label tagged missing values
+gss_raw$consci <- labelled(
+  gss_raw$consci,
+  append(
+    val_labels(gss_raw$consci),
+    c(
+      "Don't know (DK)" = tagged_na("d"),
+      "Inapplicable (IAP)" = tagged_na("i"),
+      "No Answer (NA)" = tagged_na("n"),
+      "Skipped on Web" = tagged_na("s")
+    ) 
+  )
+)
+
+val_labels(gss_raw$consci)
+
+# Convert labelled vector to factor
+gss_raw$consci <- as_factor(gss_raw$consci)
+
+stats_consci <- gss_raw %>%
+  filter(
+    consci != "Inapplicable (IAP)" &
+      consci != "Skipped on Web" &
+      !year %in% c(1972, 1973, 1985)
+  ) %>%
+  select(consci) %>%
+  mutate(n = n()) %>%
+  group_by(consci) %>%
+  summarise(
+    consci_elements_count = n(),
+    n = unique(n)
+  ) %>%
+  ungroup() %>%
+  mutate(consci_elements_fraction = consci_elements_count / n)
+
+stats_consci
+
+stats_consci_until_2010 <- gss_raw %>%
+  filter(
+    consci != "Inapplicable (IAP)" &
+      !year %in% c(1972, 1973, 1985) &
+      year <= 2010
+  ) %>%
+  select(consci) %>%
+  mutate(n = n()) %>%
+  group_by(consci) %>%
+  summarise(
+    consci_elements_count = n(),
+    n = unique(n)
+  ) %>%
+  ungroup() %>%
+  mutate(consci_elements_fraction = consci_elements_count / n)
+
+stats_consci_until_2010
+
+
+# Summary statistics: political ideology ----------------------------------
+
+# Check for tagged missing values
+unique(print_tagged_na(gss_raw$polviews))
+
+# Label tagged missing values
+gss_raw$polviews <- labelled(
+  gss_raw$polviews,
+  append(
+    val_labels(gss_raw$polviews),
+    c(
+      "Don't know (DK)" = tagged_na("d"),
+      "Inapplicable (IAP)" = tagged_na("i"),
+      "No Answer (NA)" = tagged_na("n"),
+      "Skipped on Web" = tagged_na("s")
+    ) 
+  )
+)
+
+val_labels(gss_raw$polviews)
+
+# Convert labelled vector to factor
+gss_raw$polviews <- as_factor(gss_raw$polviews)
+
+
+stats_polviews <- gss_raw %>%
+  filter(
+    polviews != "Inapplicable (IAP)" &
+      polviews != "Skipped on Web" &
+      !year %in% c(1972, 1973, 1985)
+  ) %>%
+  select(polviews) %>%
+  mutate(n = n()) %>%
+  group_by(polviews) %>%
+  summarise(
+    polviews_elements_count = n(),
+    n = unique(n)
+  ) %>%
+  ungroup() %>%
+  mutate(polviews_elements_fraction = polviews_elements_count / n)
+
+stats_polviews
+
+stats_polviews_grouped <- gss_raw %>%
+  filter(
+    polviews != "Inapplicable (IAP)" &
+      polviews != "Skipped on Web" &
+      !year %in% c(1972, 1973, 1985)
+  ) %>%
+  select(polviews) %>%
+  mutate(polviews = factor(
+    case_when(
+      polviews == "extremely liberal" ~ "liberal",
+      polviews == "liberal" ~ "liberal",
+      polviews == "slightly liberal" ~ "liberal",
+      polviews == "moderate, middle of the road" ~ "moderate",
+      polviews == "slightly conservative" ~ "conservative",
+      polviews == "conservative" ~ "conservative",
+      polviews == "extremely conservative" ~ "conservative",
+      polviews == "Don't know (DK)" ~ "Don't know (DK)",
+      polviews == "No Answer (NA)" ~ "No Answer (NA)"
+    ),
+    levels = c(
+      "liberal",
+      "moderate",
+      "conservative",
+      "Don't know (DK)",
+      "No Answer (NA)"
+    )
+  )) %>%
+  mutate(n = n()) %>%
+  group_by(polviews) %>%
+  summarise(
+    polviews_elements_count = n(),
+    n = unique(n)
+  ) %>%
+  ungroup() %>%
+  mutate(polviews_elements_fraction = polviews_elements_count / n)
+
+stats_polviews_grouped
+
+
+# Summary statistics: political party affiliation -------------------------
+
+# Check for tagged missing values
+unique(print_tagged_na(gss_raw$partyid))
+
+# Label tagged missing values
+gss_raw$partyid <- labelled(
+  gss_raw$partyid,
+  append(
+    val_labels(gss_raw$partyid),
+    c(
+      "Don't know (DK)" = tagged_na("d"),
+      "No Answer (NA)" = tagged_na("n")
+    ) 
+  )
+)
+
+val_labels(gss_raw$polviews)
+
+# Convert labelled vector to factor
+gss_raw$partyid <- as_factor(gss_raw$partyid)
+
+
+stats_partyid <- gss_raw %>%
+  filter(!year %in% c(1972, 1973, 1985)) %>%
+  select(partyid) %>%
+  mutate(n = n()) %>%
+  group_by(partyid) %>%
+  summarise(
+    partyid_elements_count = n(),
+    n = unique(n)
+  ) %>%
+  ungroup() %>%
+  mutate(partyid_elements_fraction = partyid_elements_count / n)
+
+stats_partyid
+
+stats_partyid_grouped <- gss_raw %>%
+  filter(!year %in% c(1972, 1973, 1985)) %>%
+  select(partyid) %>%
+  mutate(partyid = factor(
+    case_when(
+      partyid == "strong democrat" ~ "democrat",
+      partyid == "not very strong democrat" ~ "democrat",
+      partyid == "independent, close to democrat" ~ "independent",
+      partyid == "independent (neither, no response)" ~ "independent",
+      partyid == "independent, close to republican" ~ "independent",
+      partyid == "not very strong republican" ~ "republican",
+      partyid == "strong republican" ~ "republican",
+      partyid == "other party" ~ "other party",
+      partyid == "Don't know (DK)" ~ "Don't know (DK)",
+      partyid == "No Answer (NA)" ~ "No Answer (NA)"
+    ),
+    levels = c(
+      "democrat",
+      "independent",
+      "republican",
+      "other party",
+      "Don't know (DK)",
+      "No Answer (NA)"
+    )
+  )) %>%
+  mutate(n = n()) %>%
+  group_by(partyid) %>%
+  summarise(
+    partyid_elements_count = n(),
+    n = unique(n)
+  ) %>%
+  ungroup() %>%
+  mutate(partyid_elements_fraction = partyid_elements_count / n)
+
+stats_partyid_grouped
 
 
 # Create summary statistics -----------------------------------------------
@@ -99,7 +317,7 @@ gss_stats <- gss %>%
       "Confidence in Science" = "consci",
       "Female" = "female",
       "Non-White" = "nonwhite",
-      "Education (yrs)" = "educ",
+      "Education (years)" = "educ",
       "High School" = "highschool",
       "Bachelor" = "bachelor",
       "Graduate" = "graduate",
@@ -111,10 +329,10 @@ gss_stats <- gss %>%
       "Republican" = "republican",
       "Moderate" = "moderate",
       "Conservative" = "conservative",
-      "Post-Reagan (1981-2021)" = "postreagan",
-      "Bush (2001-2008)" = "bush",
-      "Post-Trump (2017-2021)" = "posttrump",
-      "COVID-19" = "covid19",
+      "Post-Reagan (1981--2021)" = "postreagan",
+      "Bush (2001--2008)" = "bush",
+      "Post-Trump (2017--2021)" = "posttrump",
+      "COVID-19 (2020--2021)" = "covid19",
       "Cohort" = "cohort"
     )
   )
@@ -146,7 +364,7 @@ gss_stats_2010 <- gss %>%
       "Confidence in Science" = "consci",
       "Female" = "female",
       "Non-White" = "nonwhite",
-      "Education (yrs)" = "educ",
+      "Education (years)" = "educ",
       "High School" = "highschool",
       "Bachelor" = "bachelor",
       "Graduate" = "graduate",
@@ -158,10 +376,10 @@ gss_stats_2010 <- gss %>%
       "Republican" = "republican",
       "Moderate" = "moderate",
       "Conservative" = "conservative",
-      "Post-Reagan (1981-2021)" = "postreagan",
-      "Bush (2001-2008)" = "bush",
-      "Post-Trump (2017-2021)" = "posttrump",
-      "COVID-19" = "covid19",
+      "Post-Reagan (1981--2021)" = "postreagan",
+      "Bush (2001--2008)" = "bush",
+      "Post-Trump (2017--2021)" = "posttrump",
+      "COVID-19 (2020--2021)" = "covid19",
       "Cohort" = "cohort"
     )
   )
@@ -197,7 +415,7 @@ gss_stats_2010_na <- gss_with_na %>%
       "Confidence in Science" = "consci",
       "Female" = "female",
       "Non-White" = "nonwhite",
-      "Education (yrs)" = "educ",
+      "Education (years)" = "educ",
       "High School" = "highschool",
       "Bachelor" = "bachelor",
       "Graduate" = "graduate",
@@ -208,10 +426,10 @@ gss_stats_2010_na <- gss_with_na %>%
       "Republican" = "republican",
       "Moderate" = "moderate",
       "Conservative" = "conservative",
-      "Post-Reagan (1981-2021)" = "postreagan",
-      "Bush (2001-2008)" = "bush",
-      "Post-Trump (2017-2021)" = "posttrump",
-      "COVID-19" = "covid19",
+      "Post-Reagan (1981--2021)" = "postreagan",
+      "Bush (2001--2008)" = "bush",
+      "Post-Trump (2017--2021)" = "posttrump",
+      "COVID-19 (2020--2021)" = "covid19",
       "Cohort" = "cohort"
     )
   )
@@ -238,7 +456,8 @@ summary_stats_to_latex <- function(df, file, title, footnote = NA) {
     caption.placement = "top",
     booktabs = TRUE,
     tabular.environment = "tabularx",
-    width = "\\textwidth"
+    width = "\\textwidth",
+    comment = FALSE
   ))
   
   # Remove unnecessary decimal points
@@ -269,7 +488,7 @@ summary_stats_to_latex(
     formatC(n_obs, format = "d", big.mark = ","),
     "$)"
   ),
-  footnote = "{\\it Note:} Family income is measured in constant dollars ($\\text{base}=1986$) and was z-score standardized. The original age variable was decreased by a factor of 10."
+  footnote = "{\\it Note:} Family income is measured in constant dollars ($\\text{base}=1986$) and is $z$-score standardized. The original age variable is decreased by a factor of 10."
 )
 
 # Summary statistics for 1974-2010 (without missing values)
@@ -286,7 +505,7 @@ summary_stats_to_latex(
     formatC(n_obs_2010, format = "d", big.mark = ","),
     "$)"
   ),
-  footnote = "{\\it Note:} Family income is measured in constant dollars ($\\text{base}=1986$) and was z-score standardized. The original age variable was decreased by a factor of 10."
+  footnote = "{\\it Note:} Family income is measured in constant dollars ($\\text{base}=1986$) and is $z$-score standardized. The original age variable is decreased by a factor of 10."
 )
 
 # Summary statistics for 1974-2010 (only missing values for income)
@@ -305,5 +524,5 @@ summary_stats_to_latex(
     formatC(n_obs_2010_na, format = "d", big.mark = ","),
     "$)"
   ),
-  footnote = "{\\it Note:} Family income is measured in constant dollars ($\\text{base}=1986$) and was z-score standardized. The original age variable was decreased by a factor of 10."
+  footnote = "{\\it Note:} Family income is measured in constant dollars ($\\text{base}=1986$) and is $z$-score standardized. The original age variable is decreased by a factor of 10."
 )
