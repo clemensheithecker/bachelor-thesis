@@ -16,12 +16,6 @@ library(labelled)
 library(tidyverse)
 
 
-# Source scripts ----------------------------------------------------------
-
-# A script that creates two custom ggplot2 themes
-source("ggplot2-themes.R")
-
-
 # Select variables of interest --------------------------------------------
 
 gss_variables <-
@@ -48,20 +42,10 @@ gss_variables <-
 # Extract data files
 unzip(zipfile = "../data/gss-2021.zip", exdir = "../data")
 
-gss_raw <-
-  read_dta("../data/gss-2021.dta", col_select = all_of(gss_variables))
-
-glimpse(gss_raw)
-
-
-# Convert variable labels to factors --------------------------------------
-
-gss_raw <- gss_raw %>%
-  # Convert all labeled columns to factors. Replace all numeric values with
-  # label values using 'levels = "l"'.
-  # Alternatively, 'levels = "v"' only keeps the values and 'levels = "p"' keeps
-  # the labels prefixed with values.
-  mutate_if(is.labelled, ~ to_factor(., levels = "l"))
+gss_raw <- read_dta(
+  "../data/gss-2021.dta",
+  col_select = all_of(gss_variables)
+)
 
 glimpse(gss_raw)
 
@@ -70,6 +54,16 @@ glimpse(gss_raw)
 
 # Transformed data with missing values
 gss_with_na <- gss_raw
+
+# Convert variable labels to factors
+gss_with_na <- gss_with_na %>%
+  # Convert all labeled columns to factors. Replace all numeric values with
+  # label values using 'levels = "l"'.
+  # Alternatively, 'levels = "v"' only keeps the values and 'levels = "p"' keeps
+  # the labels prefixed with values.
+  mutate_if(is.labelled, ~ to_factor(., levels = "l"))
+
+glimpse(gss_with_na)
 
 # Suppress printed messages
 invisible(capture.output(

@@ -30,15 +30,14 @@ source("ggplot2-themes.R")
 
 load("../data/gss.RData")
 load("../data/gss-with-na.RData")
-
-glimpse(gss_with_na)
+# load("../data/gss-raw.RData")
 
 
 # Missing values ----------------------------------------------------------
 
 # Count number of missing values for each attribute as a list
 missing_values <- as.list(colSums(is.na(gss_with_na))) %>%
-  # Convert the list to a dataframe
+  # Convert the list to a data frame
   stack(.) %>%
   # Set the column names
   setNames(., c("n_missing_values", "variable")) %>%
@@ -320,38 +319,20 @@ var_label(consci_by_polviews$polviews) <-
 
 ## Data selection from gss_with_na ----------------------------------------
 
-# Change factor levels of consci
-gss_with_na$consci <-
-  recode_factor(
-    gss_with_na$consci,
-    `a great deal` = 1,
-    `only some` = 0,
-    `hardly any` = 0
-  )
-
-# Convert factor level to numeric
-gss_with_na <- gss_with_na %>%
-  # Convert factor level to numeric
-  mutate(consci = as.numeric(as.character(consci)))
-
-gss_with_na$polviews <-
-  # Change factor levels
-  recode_factor(
-    gss_with_na$polviews,
-    `slightly conservative` = "Conservative",
-    `conservative` = "Conservative",
-    `extremely conservative` = "Conservative",
-    `extremely liberal` = "Liberal",
-    `liberal` = "Liberal",
-    `slightly liberal` = "Liberal",
-    `moderate, middle of the road` = "Moderate"
-  )
-
-consci_by_polviews_raw <- gss_with_na %>%
+consci_by_polviews_with_na <- gss_with_na %>%
   # Select relevant columns
+  select(year, consci, conservative, moderate) %>%
+  # Derive "polviews" variable from "conservative" and "moderate"
+  mutate(polviews = as.factor(
+    case_when(
+      conservative == 1 ~ "Conservative",
+      conservative == 0 & moderate == 0 ~ "Liberal",
+      moderate == 1 ~ "Moderate"
+    )
+  )) %>%
   select(year, consci, polviews) %>%
-  # Drop all records containing null values
-  drop_na() %>%
+  # Omit all records containing NA values
+  na.omit() %>%
   # Group data by year and political ideology
   group_by(year, polviews) %>%
   # Summarize grouped data using the mean function
@@ -361,6 +342,69 @@ consci_by_polviews_raw <- gss_with_na %>%
   # Calculate the three-period moving average for the group-specific means of
   # confidence in science using the "zoo" package
   mutate(consci_moving_mean = zoo::rollmean(consci_mean, k = 3, fill = NA))
+
+# Add variable labels
+var_label(consci_by_polviews_with_na$polviews) <-
+  "think of self as liberal or conservative"
+
+
+## Data selection from gss_raw (alternative to gss_with_na) ---------------
+
+# consci_by_polviews_raw <- gss_raw %>%
+#   # Select relevant columns
+#   select(year, consci, polviews) %>%
+#   # Convert consci and polviews columns to factors
+#   mutate(consci = as_factor(consci),
+#          polviews = as_factor(polviews))
+# 
+# glimpse(consci_by_polviews_raw)
+# 
+# unique(consci_by_polviews_raw$consci)
+# unique(consci_by_polviews_raw$polviews)
+# 
+# # Re-code factor levels
+# 
+# consci_by_polviews_raw$consci <-
+#   recode_factor(
+#     consci_by_polviews_raw$consci,
+#     `a great deal` = 1,
+#     `only some` = 0,
+#     `hardly any` = 0
+#   )
+# 
+# consci_by_polviews_raw$polviews <-
+#   recode_factor(
+#     consci_by_polviews_raw$polviews,
+#     `extremely conservative` = "Conservative",
+#     `conservative` = "Conservative",
+#     `slightly conservative` = "Conservative",
+#     `extremely liberal` = "Liberal",
+#     `liberal` = "Liberal",
+#     `slightly liberal` = "Liberal",
+#     `moderate, middle of the road` = "Moderate"
+#   )
+# 
+# unique(consci_by_polviews_raw$consci)
+# unique(consci_by_polviews_raw$polviews)
+# 
+# # Convert "consci" variable to numeric
+# consci_by_polviews_raw <- consci_by_polviews_raw %>%
+#   mutate(consci = as.numeric(as.character(consci)))
+# 
+# glimpse(consci_by_polviews_raw)
+# 
+# consci_by_polviews_raw <- consci_by_polviews_raw %>%
+#   # Omit all records containing NA values
+#   na.omit() %>%
+#   # Group data by year and political ideology
+#   group_by(year, polviews) %>%
+#   # Summarize grouped data using the mean function
+#   summarize(consci_mean = mean(consci)) %>%
+#   # Group data by political ideology
+#   group_by(polviews) %>%
+#   # Calculate the three-period moving average for the group-specific means of
+#   # confidence in science using the "zoo" package
+#   mutate(consci_moving_mean = zoo::rollmean(consci_mean, k = 3, fill = NA))
 
 
 ### Figure 1: Trust in science by political ideology ----------------------
@@ -412,11 +456,11 @@ ggsave(
 # Close the AGG PNG graphic device
 dev.off()
 
-consci_by_polviews_raw %>%
+consci_by_polviews_with_na %>%
   consci_polviews()
 
 ggsave(
-  "../figures/consci-by-polviews-raw.png",
+  "../figures/consci-by-polviews-with-na.png",
   device = agg_png,
   res = 300,
   width = 16,
@@ -464,7 +508,9 @@ tikz(
   "../reports/figures/consci-by-polviews.tex",
   width = 0.95 * 16 / 2.54,
   height = 0.95 * 3 / 4 * 16 / 2.54,
-  sanitize = TRUE)
+  sanitize = TRUE,
+  timestamp = FALSE
+)
 
 consci_by_polviews %>%
   consci_polviews_latex()
@@ -473,12 +519,14 @@ consci_by_polviews %>%
 dev.off()
 
 tikz(
-  "../reports/figures/consci-by-polviews-raw.tex",
+  "../reports/figures/consci-by-polviews-with-na.tex",
   width = 0.95 * 16 / 2.54,
   height = 0.95 * 3 / 4 * 16 / 2.54,
-  sanitize = TRUE)
+  sanitize = TRUE,
+  timestamp = FALSE
+)
 
-consci_by_polviews_raw %>%
+consci_by_polviews_with_na %>%
   consci_polviews_latex()
 
 # Close the tikz graphics device

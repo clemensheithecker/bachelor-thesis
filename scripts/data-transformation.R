@@ -93,7 +93,6 @@ var_label(gss_with_na$nonwhite) <- "respondent's race dummy"
 # Transform "educ" variable -----------------------------------------------
 
 glimpse(gss_with_na)
-
 unique(gss_with_na$educ)
 
 # Change factor levels
@@ -219,11 +218,15 @@ glimpse(gss_with_na)
 unique(gss_with_na$age)
 length(unique(gss_with_na$age))
 
+table(gss_with_na$age)
+
+levels(gss_with_na$age)
+
+levels(gss_with_na$age)[levels(gss_with_na$age) == "89 or older"] <- 89
+
+levels(gss_with_na$age)
+
 gss_with_na <- gss_with_na %>%
-  # Remove individuals "89 or older"
-  filter(age != "89 or older") %>%
-  # Drop unused factor levels (namely "89 or older")
-  mutate(age = droplevels(age)) %>%
   # Convert factor level to numeric
   mutate(age = as.numeric(as.character(age))) %>%
   # Divide "age" by 10
@@ -276,7 +279,11 @@ gss_with_na <- gss_with_na %>%
   # Create new columns conditional on polviews column
   mutate(
     moderate = if_else(polviews == "moderate, middle of the road", 1, 0),
-    conservative = if_else(polviews == "conservative", 1, 0)
+    conservative = if_else(polviews %in% c(
+      "extremely conservative",
+      "conservative",
+      "slightly conservative"
+      ), 1, 0)
   ) %>%
   # Remove "polviews" column
   select(-polviews)
