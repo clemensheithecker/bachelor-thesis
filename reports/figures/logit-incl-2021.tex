@@ -1,0 +1,86 @@
+\begin{ThreePartTable} 
+\centering 
+\small 
+\begin{tabularx}{\textwidth}{Xccc} 
+  \caption{Logit Models Predicting Public Confidence in Science} 
+  \label{table:LogitPre2021} \\ 
+\toprule 
+ & Model 1 & Model 2 & Model 3 \\ 
+\midrule \\[-2.1ex] 
+\endfirsthead 
+  \caption{Logit Models Predicting Public Confidence in Science (Continued)} \\ 
+\toprule 
+ & Model 1 & Model 2 & Model 3 \\ 
+\midrule \\[-2.1ex] 
+\endhead 
+\midrule[\heavyrulewidth] 
+\multicolumn{4}{r}{\textit{Continued on next page}} 
+\endfoot 
+\bottomrule \\[-4.1ex] 
+\endlastfoot 
+  Constant & 14.371$^{***}$ & $-$8.700$^{*}$ & 14.020$^{***}$ \\ 
+  & (2.581) & (3.487) & (2.578) \\ 
+  Year & $-$0.007$^{***}$ & 0.004$^{*}$ & $-$0.007$^{***}$ \\ 
+  & (0.001) & (0.002) & (0.001) \\ 
+  Female & $-$0.289$^{***}$ & $-$0.293$^{***}$ & $-$0.293$^{***}$ \\ 
+  & (0.022) & (0.022) & (0.022) \\ 
+  Education (years) & 0.078$^{***}$ & 0.078$^{***}$ & 0.079$^{***}$ \\ 
+  & (0.006) & (0.006) & (0.006) \\ 
+  High School & 0.009 & 0.004 & 0.005 \\ 
+  & (0.030) & (0.030) & (0.030) \\ 
+  Bachelor & 0.304$^{***}$ & 0.292$^{***}$ & 0.290$^{***}$ \\ 
+  & (0.050) & (0.050) & (0.050) \\ 
+  Graduate & 0.279$^{***}$ & 0.262$^{***}$ & 0.260$^{***}$ \\ 
+  & (0.065) & (0.066) & (0.066) \\ 
+  Church Attendance & $-$0.055$^{***}$ & $-$0.053$^{***}$ & $-$0.054$^{***}$ \\ 
+  & (0.004) & (0.004) & (0.004) \\ 
+  Family Income & 0.137$^{***}$ & 0.137$^{***}$ & 0.136$^{***}$ \\ 
+  & (0.012) & (0.012) & (0.012) \\ 
+  Age & $-$0.362$^{***}$ & $-$0.375$^{***}$ & $-$0.373$^{***}$ \\ 
+  & (0.037) & (0.038) & (0.038) \\ 
+  Age\textsuperscript{2} & 0.035$^{***}$ & 0.036$^{***}$ & 0.036$^{***}$ \\ 
+  & (0.004) & (0.004) & (0.004) \\ 
+  Independent & $-$0.061$^{*}$ & $-$0.043 & $-$0.040 \\ 
+  & (0.026) & (0.026) & (0.026) \\ 
+  Republican & 0.018 & 0.058 & 0.053 \\ 
+  & (0.030) & (0.030) & (0.030) \\ 
+  Moderate & $-$0.256$^{***}$ & 20.897$^{***}$ & $-$0.115 \\ 
+  & (0.028) & (3.671) & (0.059) \\ 
+  Conservative & $-$0.269$^{***}$ & 45.225$^{***}$ & 0.051 \\ 
+  & (0.030) & (3.833) & (0.063) \\ 
+  Post-Reagan (1981--2021) & $-$0.069 & $-$0.076$^{*}$ & 0.046 \\ 
+  & (0.038) & (0.038) & (0.058) \\ 
+  Bush (2001--2008) & $-$0.045 & $-$0.040 & 0.032 \\ 
+  & (0.037) & (0.037) & (0.067) \\ 
+  Post-Trump (2017--2021) & 0.125 & 0.124 & 0.414$^{***}$ \\ 
+  & (0.064) & (0.065) & (0.111) \\ 
+  COVID-19 (2020--2021) & 0.150$^{*}$ & 0.145$^{*}$ & 0.642$^{***}$ \\ 
+  & (0.072) & (0.073) & (0.135) \\ 
+  Year $\times$ Moderate &  & $-$0.011$^{***}$ &  \\ 
+  &  & (0.002) &  \\ 
+  Year $\times$ Conservative &  & $-$0.023$^{***}$ &  \\ 
+  &  & (0.002) &  \\ 
+  Moderate $\times$ Post-Reagan &  &  & $-$0.098 \\ 
+  &  &  & (0.069) \\ 
+  Moderate $\times$ Bush &  &  & $-$0.011 \\ 
+  &  &  & (0.088) \\ 
+  Moderate $\times$ Post-Trump &  &  & $-$0.322$^{*}$ \\ 
+  &  &  & (0.144) \\ 
+  Moderate $\times$ COVID-19 &  &  & $-$0.579$^{**}$ \\ 
+  &  &  & (0.181) \\ 
+  Conservative $\times$ Post-Reagan &  &  & $-$0.256$^{***}$ \\ 
+  &  &  & (0.072) \\ 
+  Conservative $\times$ Bush &  &  & $-$0.210$^{*}$ \\ 
+  &  &  & (0.089) \\ 
+  Conservative $\times$ Post-Trump &  &  & $-$0.516$^{***}$ \\ 
+  &  &  & (0.149) \\ 
+  Conservative $\times$ COVID-19 &  &  & $-$0.875$^{***}$ \\ 
+  &  &  & (0.187) \\ 
+ \midrule  
+Observations & 36,079 & 36,079 & 36,079 \\ 
+Log Likelihood & $-$23,739.690 & $-$23,668.530 & $-$23,649.630 \\ 
+Akaike Inf. Crit. & 47,517.390 & 47,379.060 & 47,353.260 \\ 
+\end{tabularx} 
+{\it Note:} Numbers in parentheses represent standard errors. The reference category for political party affiliation is Democrat. The reference category for political ideology is liberal. Age\textsuperscript{2} is a squared term. \newline $^{*}p<0.1$; $^{**}p<0.05$; $^{***}p<0.01$
+\bigskip 
+\end{ThreePartTable} 
