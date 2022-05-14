@@ -13,6 +13,7 @@ gss-2021-methodological-primer.pdf
 # LaTeX
 *.aux
 *.log
+*.out
 *.synctex.gz
 
 # R
