@@ -487,7 +487,7 @@ consci_polviews_latex <- function(data) {
     # Add line plot
     geom_line(mapping = aes(linetype = polviews)) +
     # Add data points
-    geom_point(mapping = aes(shape = polviews)) +
+    geom_point(mapping = aes(shape = polviews), size = 2) +
     # Change the spacing of the x-axis tick marks
     scale_x_continuous(breaks = seq(from = 1974, to = 2022, by = 4)) +
     # Cahgne the y-axis scale to percent
