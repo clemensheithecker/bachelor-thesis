@@ -15,6 +15,12 @@ library(tidyverse)
 library(xtable)
 
 
+# Source scripts ----------------------------------------------------------
+
+# A script that includes custom stargazer table exporting functions
+source("custom-tables.R")
+
+
 # Load data ---------------------------------------------------------------
 
 load("../data/gss.RData")
@@ -437,43 +443,6 @@ gss_stats_2010_na <- gss_with_na %>%
 
 # Convert data frame to LaTeX table ---------------------------------------
 
-summary_stats_to_latex <- function(df, file, title, footnote = NA) {
-  # Capture output from xtable
-  output <- capture.output(print(
-    xtable(
-      df,
-      type = "latex",
-      caption = title,
-      # Set the alignment of the columns
-      align = c("l", "X", "r", "r", "r", "r"),
-      # Set the number of digits
-      digits = c(0, 0, 3, 3, 3, 3),
-      # Set the format of the columns
-      display = c("s", "s", "f", "f", "f", "f")
-    ),
-    type = "latex",
-    include.rownames = FALSE,
-    caption.placement = "top",
-    booktabs = TRUE,
-    tabular.environment = "tabularx",
-    width = "\\textwidth",
-    comment = FALSE
-  ))
-  
-  # Remove unnecessary decimal points
-  output <- gsub(".000", "", output)
-  
-  if (!is.na(footnote)) {
-    # Add footnote
-    output[length(output) + 1] <- output[length(output)]
-    output[length(output) - 1] <- paste0("\\floatfoot*{", footnote, "}")
-  }
-  
-  # Write to LaTeX file
-  write(output, file = file)
-}
-
-
 # Summary statistics for 1974-2021 (without missing values)
 
 # Number of observations
@@ -488,6 +457,7 @@ summary_stats_to_latex(
     formatC(n_obs, format = "d", big.mark = ","),
     "$)"
   ),
+  label = "table:GssStats",
   footnote = "{\\it Note:} Family income is measured in constant dollars ($\\text{base}=1986$) and is $z$-score standardized. The original age variable is decreased by a factor of 10."
 )
 
@@ -505,6 +475,7 @@ summary_stats_to_latex(
     formatC(n_obs_2010, format = "d", big.mark = ","),
     "$)"
   ),
+  label = "table:GssStats2010",
   footnote = "{\\it Note:} Family income is measured in constant dollars ($\\text{base}=1986$) and is $z$-score standardized. The original age variable is decreased by a factor of 10."
 )
 
@@ -524,5 +495,6 @@ summary_stats_to_latex(
     formatC(n_obs_2010_na, format = "d", big.mark = ","),
     "$)"
   ),
+  label = "GssStats2010Na",
   footnote = "{\\it Note:} Family income is measured in constant dollars ($\\text{base}=1986$) and is $z$-score standardized. The original age variable is decreased by a factor of 10."
 )
