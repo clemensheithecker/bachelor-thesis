@@ -24,6 +24,9 @@ library(stargazer)
 
 library(tidyverse)
 
+# R Graphics Output in LaTeX Format
+library(tikzDevice)
+
 # Export data frame as LaTeX table
 library(xtable)
 
@@ -571,13 +574,115 @@ for (model in c("model_1", "model_2", "model_3")) {
     theme_thesis()
   
   ggsave(
-    paste0("../figures/predict_polview_year_pre_2021_", model, ".png"),
+    paste0(
+      "../figures/predict-polview-year-pre-2021-",
+      gsub(
+        pattern = "_",
+        replacement = "-",
+        x = model,
+        fixed = TRUE
+      ),
+      ".png"
+    ),
     device = agg_png,
     res = 300,
     width = 16,
     height = 3 / 4 * 16,
     units = "cm"
   )
+  
+  tikz(
+    paste0(
+      "../reports/figures/predict-polview-year-pre-2021-",
+      gsub(
+        pattern = "_",
+        replacement = "-",
+        x = model,
+        fixed = TRUE
+      ),
+      ".tex"
+    ),
+    width = 0.95 * 16 / 2.54,
+    height = 0.95 * 3 / 4 * 16 / 2.54,
+    sanitize = TRUE,
+    timestamp = FALSE
+  )
+  
+  # Plotting figure (LaTeX)
+  ggplot(
+    data = predict_polview_year_pre_2021 %>% mutate(
+      # Change order of factor level to change the line plotting order
+      polview = factor(
+        polview,
+        levels = c("moderate", "liberal", "conservative")
+      )
+    ),
+    mapping = aes(x = year)
+  ) +
+    geom_line(
+      mapping = aes(y = fit, color = polview, linetype = polview)
+    ) +
+    geom_ribbon(
+      mapping = aes(
+        ymin = lower_bound,
+        ymax = upper_bound,
+        fill = polview
+      ),
+      alpha = 0.1
+    ) +
+    # Add data points
+    geom_point(mapping = aes(y = fit, shape = polview, color = polview), size = 2) +
+    # Change the spacing of the x-axis tick marks
+    scale_x_continuous(breaks = seq(from = 1974, to = 2022, by = 4)) +
+    # Change the spacing of the y-axis tick marks and the axis' scale to percent
+    scale_y_continuous(
+      breaks = seq(from = 0, to = 1, by = 0.1),
+      label = scales::percent_format(accuracy = 1)
+    ) +
+    # Change the scale limits of the y-axis
+    coord_cartesian(ylim = c(0.3, 0.7)) +
+    # Set the colors for the different groups using a gray scale
+    scale_color_grey(
+      start = 0,
+      end = 0.4,
+      labels = c(
+        "conservative" = "Conservative",
+        "liberal" = "Liberal",
+        "moderate" = "Moderate"
+      )
+    ) +
+    scale_fill_grey(
+      start = 0,
+      end = 0.4,
+      labels = c(
+        "conservative" = "Conservative",
+        "liberal" = "Liberal",
+        "moderate" = "Moderate"
+      )
+    ) +
+    scale_linetype_discrete(
+      labels = c(
+        "conservative" = "Conservative",
+        "liberal" = "Liberal",
+        "moderate" = "Moderate"
+      )
+    ) +
+    scale_shape_discrete(
+      labels = c(
+        "conservative" = "Conservative",
+        "liberal" = "Liberal",
+        "moderate" = "Moderate"
+      )
+    ) +
+    labs(
+      x = "Year",
+      y = "Predicted Probability"
+    ) +
+    # Remove the legend for the fill aesthetic and increase the legend key width
+    guides(fill = "none", color = guide_legend(keywidth = 3)) +
+    theme_thesis_latex()
+  
+  plot(last_plot())
 }
 
 
@@ -689,7 +794,16 @@ for (model in c("model_4", "model_5", "model_6")) {
     theme_thesis()
   
   ggsave(
-    paste0("../figures/predict_polview_year_incl_2021_", model, ".png"),
+    paste0(
+      "../figures/predict-polview-year-incl-2021-",
+      gsub(
+        pattern = "_",
+        replacement = "-",
+        x = model,
+        fixed = TRUE
+      ),
+      ".png"
+    ),
     device = agg_png,
     res = 300,
     width = 16,
