@@ -7,6 +7,8 @@ rm(list = ls())
 
 # Load libraries ----------------------------------------------------------
 
+library(labelled)
+
 library(tidyr)
 
 library(tidyverse)

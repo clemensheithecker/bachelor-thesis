@@ -1,29 +1,12 @@
-\documentclass[12pt, a4paper]{article}
+\documentclass[12pt, a4paper, titlepage]{article}
 
-% Packages ----------------------------------------------------------------
+% Document setup
+\usepackage[margin=2.5cm]{geometry}
 
-% Enhance the structure and output of math formulas
+% Math
 \usepackage{amsmath}
 
-% Bibliography management
-\usepackage[backend=biber, style=apa]{biblatex}
-\addbibresource{references.bib}
-
-% Customize page dimensions
-\usepackage{geometry}
-
-% Set page margins and increase height of header
-\geometry{
-	margin=2.5cm,
-	% Show frame for debugging
-	% showframe,
-	headheight=16pt
-}
-
-% Makes tables better
-\usepackage{booktabs}
-
-% Customize captions of figures and tables
+% Figures
 \usepackage{caption}
 \captionsetup{
 	% Change label font
@@ -35,58 +18,51 @@
 	singlelinecheck = false
 }
 
-% Make better headers and footers
-\usepackage{fancyhdr}
-\pagestyle{fancy}
+% Links
+\usepackage{hyperref}
 
-% Customize layout of floating environments; I use it for figure footnotes
-\usepackage{floatrow}
-% Place figure and table captions above
-\floatsetup[figure]{style=plaintop}
-\floatsetup[table]{style=plaintop}
+% Referencing
+\usepackage[style=apa, backend=biber, natbib]{biblatex}
+\addbibresource{references.bib}
+\usepackage[nameinlink]{cleveref}
 
-\usepackage{tabularx}
+% Tables
+\usepackage{booktabs}
+\usepackage{dcolumn}
+\usepackage{longtable}
+\usepackage{ltablex}
+\keepXColumns
+\usepackage{threeparttablex}
 
-% Create graphic elements
-\usepackage{tikz}
 
-% -------------------------------------------------------------------------
+\title{Extension of \citet{gauchat-2012}---Politicization of Science in the Public Sphere: A Study of Public Trust in the United States, 1974 to 2021 [Draft] \\[0.2em] \Large Tables}
+\author{Clemens Stefan Heithecker \\ Tilburg University}
 
-% Clear header and footer
-\fancyhead{}
-\fancyfoot{}
-
-% Set custom header and footer
-\fancyhead[L]{Bachelor Thesis}
-\fancyfoot[L]{Clemens S. Heithecker}
-\fancyfoot[R]{\thepage}
-\renewcommand{\headrulewidth}{0.4pt}
-\renewcommand{\footrulewidth}{0.4pt}
-
-% Remove paragraph indentation
-\setlength{\parindent}{0pt}
-
-% Start every section on a new page
-\let\stdsection\section
-\renewcommand\section{\newpage\stdsection}
 
 \begin{document}
 
-\section*{Analysis}
+% Include references in the bibliography without in-text citing
+\nocite{davern-2021}
+\nocite{gauchat-2012}
 
-This paper is an extension of \cite{gauchat_politicization_2012}.
+
+\maketitle
 
 \input{figures/gss-stats}
 
-\begin{figure}[h]
-	\caption{Unadjusted Means of Public Trust in Science for Each Survey Year by Political Ideology}
-	%\scalebox{.95}{\input{figures/consci-by-polviews-raw}}
-	\input{figures/consci-by-polviews-raw}
-	\floatfoot*{{\it Note:} Figure shows three-year moving averages for each group, which smooth the patterns}
-\end{figure}
+\clearpage
+\input{figures/logit-pre-2021}
 
 \clearpage
+\input{figures/logit-incl-2021}
 
+\clearpage
+\input{figures/logit-pre-2021-margins}
+
+\clearpage
+\input{figures/logit-incl-2021-margins}
+
+\clearpage
 \printbibliography
 
 \end{document}

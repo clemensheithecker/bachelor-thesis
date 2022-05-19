@@ -1,3 +1,46 @@
+# Custom texreg function --------------------------------------------------
+
+texreg_custom <- function(..., path) {
+  require(texreg)
+  
+  table <- texreg(...)
+  
+  # Replace longtable with tabularx
+  table <- sub(
+    pattern = "\\begin{longtable}{l",
+    replacement = "\\begin{tabularx}{\\textwidth}{X",
+    x = table,
+    fixed = TRUE
+  )
+  table <- sub(
+    pattern = "\\end{longtable}",
+    replacement = "\\end{tabularx}",
+    x = table,
+    fixed = TRUE
+  )
+  
+  # Fix table notes
+  table <- sub(
+    pattern = "\\begin{TableNotes}[flushleft]",
+    replacement = "\\begin{TableNotes}[para]",
+    x = table,
+    fixed = TRUE
+  )
+  table <- sub(
+    pattern = "\\begin{TableNotes}[para]\n\\scriptsize",
+    replacement = "\\begin{TableNotes}[para]\n\\footnotesize",
+    x = table,
+    fixed = TRUE
+  )
+  
+  # Print table
+  # cat(table, sep = "\n")
+  
+  # Export table
+  cat(table, file = path, sep = "\n")
+}
+
+
 regression_table_thesis <- function(..., file, footnote = NA) {
   # Todo: Optional argument for longtable
   require(devtools)
@@ -141,7 +184,9 @@ regression_table_thesis <- function(..., file, footnote = NA) {
 }
 
 
-summary_stats_to_latex <- function(df, file, title, label, footnote = NA) {
+# Summary statistics table ------------------------------------------------
+
+summary_stats_to_latex <- function(df, file, title, label, footnote) {
   # Capture output from xtable
   output <- capture.output(print(
     xtable(
@@ -173,29 +218,33 @@ summary_stats_to_latex <- function(df, file, title, label, footnote = NA) {
   
   tabularx_position <- which(startsWith(output, "\\begin{tabularx}"))
   
-  output <- c(
+  output_new <- c(
     output[1:caption_position - 1],
+    "\\begin{ThreePartTable}",
+    "\\begin{TableNotes}[para]",
+    paste0("\\footnotesize{", footnote, "}"),
+    "\\end{TableNotes}",
     output[tabularx_position],
     caption,
     paste0(label, " \\\\"),
     output[tabularx_position + 1:length(output)]
   )
-  
+
+
   # Remove null values
-  output <- output[!is.na(output)]
+  output_new <- output_new[!is.na(output_new)]
+  
+  output_new[length(output_new) + 2] <- output_new[length(output_new)]
+  output_new[length(output_new) - 2] <- output_new[length(output_new) - 3]
+  output_new[length(output_new) - 1] <- "\\end{ThreePartTable}"
+  output_new[length(output_new) - 3] <- "   \\insertTableNotes"
   
   # Remove unnecessary decimal points
-  output <- gsub(".000", "", output)
-  
-  if (!is.na(footnote)) {
-    # Add footnote
-    output[length(output) + 1] <- output[length(output)]
-    output[length(output) - 1] <- paste0("\\floatfoot*{", footnote, "}")
-  }
+  output_new <- gsub(".000", "", output_new)
   
   # Print table
-  cat(output, sep = "\n")
+  cat(output_new, sep = "\n")
   
   # Write to LaTeX file
-  write(output, file = file)
+  write(output_new, file = file)
 }
