@@ -522,3 +522,22 @@ texreg_custom(
   include.deviance = FALSE,
   include.nobs = TRUE
 )
+
+
+# Export models -----------------------------------------------------------
+
+save(
+  model_1,
+  model_2,
+  model_3,
+  model_4,
+  model_5,
+  model_6,
+  margins_model_1,
+  margins_model_2,
+  margins_model_3,
+  margins_model_4,
+  margins_model_5,
+  margins_model_6,
+  file = "../data/models.RData"
+)
