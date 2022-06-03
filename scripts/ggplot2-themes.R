@@ -1,3 +1,19 @@
+# Colors ------------------------------------------------------------------
+
+theme_thesis_colors <- list(
+  basic = list(
+    primary = "#262626",
+    secondary = "#737373",
+    tertiary = "#e5e5e5"
+  ),
+  ideology = list(
+    red = "#da1212",
+    blue = "#11468F",
+    gray = "#737373"
+  )
+)
+
+
 # Standard theme ----------------------------------------------------------
 
 theme_thesis <-
