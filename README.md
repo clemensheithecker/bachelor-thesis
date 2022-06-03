@@ -29,6 +29,8 @@ I model the interaction of political ideology and public trust in science in the
 | `Model 5 Variation` | `Model 5` _with_ a post-2010s (2010 and after) cultural break, _including_ 2020/2021. |
 | `Model 6`           | Group-specific cultural break effects, _including_ 2020/2021.                         |
 
+Please refer to [figures-presentation.pdf](reports/figures-presentation.pdf) for a graphical representation of the data analysis, including data exploration and predictions. For an overview of the regression results, please look at [tables.pdf](reports/tables.pdf).
+
 ## References
 
 Davern, Michael; Bautista, Rene; Freese, Jeremy; Morgan, Stephen L.; and Tom W. Smith. General Social Survey 2021 Cross-section. [Machine-readable data file]. Principal Investigator, Michael Davern; Co-Principal Investigators, Rene Bautista, Jeremy Freese, Stephen L. Morgan, and Tom W. Smith. NORC ed. Chicago, 2021. 1 datafile (68,846 cases) and 1 codebook (506 pages).
