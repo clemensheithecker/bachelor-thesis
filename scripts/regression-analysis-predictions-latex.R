@@ -13,12 +13,6 @@ library(tidyverse)
 library(tikzDevice)
 
 
-# Source scripts ----------------------------------------------------------
-
-# A script that creates two custom ggplot2 themes
-source("ggplot2-themes.R")
-
-
 # Load data ---------------------------------------------------------------
 
 load("../data/gss.RData")
@@ -30,6 +24,19 @@ gss_pre_2021 <- gss %>%
 
 gss_incl_2021 <- gss %>%
   select(-nonwhite, -south)
+
+
+gss_pre_2021_incl_post2010s <- gss_pre_2021 %>%
+  mutate(post2010s = ifelse(test = year >= 2010, yes = 1, no = 0))
+
+gss_incl_2021_incl_post2010s <- gss_incl_2021 %>%
+  mutate(post2010s = ifelse(test = year >= 2010, yes = 1, no = 0))
+
+
+# Source scripts ----------------------------------------------------------
+
+# A script that creates two custom ggplot2 themes
+source("ggplot2-themes.R")
 
 
 # Predicted probabilities -------------------------------------------------
@@ -109,7 +116,7 @@ prediction_polview_year_plot <- function(data) {
         ymax = upper_bound,
         fill = polview
       ),
-      alpha = 0.1
+      alpha = 0.25
     ) +
     # Add data points
     geom_point(
@@ -124,20 +131,26 @@ prediction_polview_year_plot <- function(data) {
       label = scales::percent_format(accuracy = 1)
     ) +
     # Change the scale limits of the y-axis
-    coord_cartesian(ylim = c(0.3, 0.7)) +
-    # Set the colors for the different groups using a gray scale
-    scale_color_grey(
-      start = 0,
-      end = 0.4,
+    coord_cartesian(ylim = c(0.2, 0.8)) +
+    # Set the colors for the different groups
+    scale_color_manual(
+      values = c(
+        "conservative" = theme_thesis_colors$ideology$red,
+        "liberal" = theme_thesis_colors$ideology$blue,
+        "moderate" = theme_thesis_colors$ideology$gray
+      ),
       labels = c(
         "conservative" = "Conservative",
         "liberal" = "Liberal",
         "moderate" = "Moderate"
       )
     ) +
-    scale_fill_grey(
-      start = 0,
-      end = 0.4,
+    scale_fill_manual(
+      values = c(
+        "conservative" = theme_thesis_colors$ideology$red,
+        "liberal" = theme_thesis_colors$ideology$blue,
+        "moderate" = theme_thesis_colors$ideology$gray
+      ),
       labels = c(
         "conservative" = "Conservative",
         "liberal" = "Liberal",
@@ -170,9 +183,9 @@ prediction_polview_year_plot <- function(data) {
 
 ## Pre 2021 ---------------------------------------------------------------
 
-mean_polview_year_pre_2021 <- gss_pre_2021 %>%
+mean_polview_year_pre_2021 <- gss_pre_2021_incl_post2010s %>%
   group_by(moderate, conservative, year) %>%
-  summarise(across(female:posttrump, ~ mean(.x))) %>%
+  summarise(across(c(female:posttrump, post2010s), ~ mean(.x))) %>%
   ungroup() %>%
   mutate(
     polview = as.factor(
@@ -185,36 +198,31 @@ mean_polview_year_pre_2021 <- gss_pre_2021 %>%
   )
 
 
-for (i in 1:3) {
+for (i in c("1", "2", "2_variation", "3")) {
   model <- get(paste0("model_", i))
   
-  predict_polview_year_pre_2021 <- data.frame()
-  
-  for (polview in c("liberal", "conservative", "moderate")) {
-    predict_polview_year_pre_2021 <- bind_rows(
-      predict_polview_year_pre_2021,
-      predict_df(
-        dataframe = mean_polview_year_pre_2021 %>% filter(polview == polview),
-        regression = model,
-        probability = 0.95
+  predict_polview_year_pre_2021 <- predict_df(
+    dataframe = mean_polview_year_pre_2021,
+    regression = model,
+    probability = 0.95
+  ) %>%
+    select(year, polview, fit, lower_bound, upper_bound) %>%
+    mutate(
+      # Change order of factor level to change the line plotting order
+      polview = factor(
+        polview,
+        levels = c("conservative", "liberal", "moderate")
       )
     )
-    
-    predict_polview_year_pre_2021 <- predict_polview_year_pre_2021 %>%
-      select(year, polview, fit, lower_bound, upper_bound) %>%
-      mutate(
-        # Change order of factor level to change the line plotting order
-        polview = factor(
-          polview,
-          levels = c("moderate", "liberal", "conservative")
-        )
-      )
-  }
   
   tikz(
     paste0(
-      "../reports/figures/predict-polview-year-pre-2021-model-",
-      i,
+      "../reports/figures/figure-predict-polview-year-model-",
+      gsub(
+        pattern = "_",
+        replacement = "-",
+        x = i
+      ),
       ".tex"
     ),
     width = 0.95 * 16 / 2.54,
@@ -237,10 +245,9 @@ for (i in 1:3) {
 
 ## Including 2021 ---------------------------------------------------------
 
-
-mean_polview_year_incl_2021 <- gss_incl_2021 %>%
+mean_polview_year_incl_2021 <- gss_incl_2021_incl_post2010s %>%
   group_by(moderate, conservative, year) %>%
-  summarise(across(female:covid19, ~ mean(.x))) %>%
+  summarise(across(c(female:covid19, post2010s), ~ mean(.x))) %>%
   ungroup() %>%
   mutate(
     polview = as.factor(
@@ -253,36 +260,31 @@ mean_polview_year_incl_2021 <- gss_incl_2021 %>%
   )
 
 
-for (i in 4:6) {
+for (i in c("4", "5", "5_variation", "6")) {
   model <- get(paste0("model_", i))
   
-  predict_polview_year_incl_2021 <- data.frame()
-  
-  for (polview in c("liberal", "conservative", "moderate")) {
-    predict_polview_year_incl_2021 <- bind_rows(
-      predict_polview_year_incl_2021,
-      predict_df(
-        dataframe = mean_polview_year_incl_2021 %>% filter(polview == polview),
-        regression = model,
-        probability = 0.95
+  predict_polview_year_incl_2021 <- predict_df(
+    dataframe = mean_polview_year_incl_2021,
+    regression = model,
+    probability = 0.95
+  ) %>%
+    select(year, polview, fit, lower_bound, upper_bound) %>%
+    mutate(
+      # Change order of factor level to change the line plotting order
+      polview = factor(
+        polview,
+        levels = c("conservative", "liberal", "moderate")
       )
     )
-    
-    predict_polview_year_incl_2021 <- predict_polview_year_incl_2021 %>%
-      select(year, polview, fit, lower_bound, upper_bound) %>%
-      mutate(
-        # Change order of factor level to change the line plotting order
-        polview = factor(
-          polview,
-          levels = c("moderate", "liberal", "conservative")
-        )
-      )
-  }
   
   tikz(
     paste0(
-      "../reports/figures/predict-polview-year-incl-2021-model-",
-      i,
+      "../reports/figures/figure-predict-polview-year-model-",
+      gsub(
+        pattern = "_",
+        replacement = "-",
+        x = i
+      ),
       ".tex"
     ),
     width = 0.95 * 16 / 2.54,

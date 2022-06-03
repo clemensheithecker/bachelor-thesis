@@ -359,7 +359,7 @@ for (i in c("1", "2", "2_variation", "3")) {
         # Change order of factor level to change the line plotting order
         polview = factor(
           polview,
-          levels = c("moderate", "liberal", "conservative")
+          levels = c("conservative", "liberal", "moderate")
         )
       )
 
@@ -424,7 +424,7 @@ for (i in c("4", "5", "5_variation", "6")) {
       # Change order of factor level to change the line plotting order
       polview = factor(
         polview,
-        levels = c("moderate", "liberal", "conservative")
+        levels = c("conservative", "liberal", "moderate")
       )
     )
   
