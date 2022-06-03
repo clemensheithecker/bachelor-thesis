@@ -20,8 +20,11 @@ title-page.tex
 # LaTeX
 *.aux
 *.log
+*.nav
 *.out
+*.snm
 *.synctex.gz
+*.toc
 
 # R
 .RData

@@ -373,7 +373,7 @@ for (i in c("1", "2", "2_variation", "3")) {
   
   ggsave(
     paste0(
-      "../figures/predict-polview-year-pre-2021-model-",
+      "../figures/predict-polview-year-model-",
       gsub(
         pattern = "_",
         replacement = "-",
@@ -438,7 +438,7 @@ for (i in c("4", "5", "5_variation", "6")) {
   
   ggsave(
     paste0(
-      "../figures/predict-polview-year-incl-2021-model-",
+      "../figures/predict-polview-year-model-",
       gsub(
         pattern = "_",
         replacement = "-",
