@@ -28,6 +28,9 @@ load("../data/gss.RData")
 glimpse(gss)
 
 
+gss_pre_2010 <- gss %>%
+  filter(year <= 2010)
+
 gss_pre_2021 <- gss %>%
   filter(year < 2021)
 
@@ -40,6 +43,13 @@ sum(is.na(gss_incl_2021))
 
 n_obs_pre_2021 <- nrow(gss_pre_2021)
 n_obs_incl_2021 <- nrow(gss_incl_2021)
+
+
+gss_pre_2021_incl_post2010s <- gss_pre_2021 %>%
+  mutate(post2010s = ifelse(test = year >= 2010, yes = 1, no = 0))
+
+gss_incl_2021_incl_post2010s <- gss_incl_2021 %>%
+  mutate(post2010s = ifelse(test = year >= 2010, yes = 1, no = 0))
 
 
 # Logistic regression models (pre 2021) -----------------------------------
@@ -55,16 +65,29 @@ model_1 <- glm(
 summary(model_1)
 
 
-model_2 <- glm(
+model_2a <- glm(
   consci ~ year + female + nonwhite + educ + highschool + bachelor + graduate +
-    south + attend + realinc + age + I(age ^ 2) + independent + republican +
-    moderate + conservative + postreagan + bush + posttrump + moderate * year +
-    conservative * year,
+    south + attend + realinc + age + I(age^2) + independent + republican +
+    moderate + conservative + postreagan + bush + posttrump + moderate:year +
+    conservative:year,
   family = binomial(link = "logit"),
   data = gss_pre_2021
 )
 
-summary(model_2)
+summary(model_2a)
+
+model_2b <- glm(
+  consci ~ year + female + nonwhite + educ + highschool + bachelor + graduate +
+    south + attend + realinc + age + I(age^2) + independent + republican +
+    moderate + conservative + postreagan + bush + posttrump + moderate:year +
+    conservative:year + post2010s + moderate:post2010s +
+    conservative:post2010s + year:post2010s + moderate:post2010s:year +
+    conservative:post2010s:year,
+  family = binomial(link = "logit"),
+  data = gss_pre_2021_incl_post2010s
+)
+
+summary(model_2b)
 
 
 model_3 <- glm(
@@ -86,9 +109,9 @@ summary(model_3)
 # getMethod("extract", "glm")
 
 texreg_custom(
-  l = list(model_1, model_2, model_3),
+  l = list(model_1, model_2a, model_3),
   # Use "path" instead of "file" when calling texreg_custom()
-  path = "../reports/figures/logit-pre-2021.tex",
+  path = "../reports/figures/table-logit-pre-2021.tex",
   stars = c(0.01, 0.05, 0.1),
   custom.model.names = c("Model 1", "Model 2", "Model 3"),
   custom.coef.names = c(
@@ -143,6 +166,78 @@ texreg_custom(
 )
 
 
+texreg_custom(
+  l = list(model_2a, model_2b),
+  # Use "path" instead of "file" when calling texreg_custom()
+  path = "../reports/figures/table-logit-pre-2021-models-2.tex",
+  stars = c(0.01, 0.05, 0.1),
+  custom.model.names = c("Model 2", "Model 2 Variation"),
+  custom.coef.names = c(
+    "Constant",
+    "Year",
+    "Female",
+    "Non-White",
+    "Education (Years)",
+    "High School",
+    "Bachelor",
+    "Graduate",
+    "South",
+    "Church Attendance",
+    "Family Income",
+    "Age",
+    "Age\\textsuperscript{2}",
+    "Independent",
+    "Republican",
+    "Moderate",
+    "Conservative",
+    "Post-Reagan (1981--2021)",
+    "Bush (2001--2008)",
+    "Post-Trump (2017--2021)",
+    "Year $\\times$ Moderate",
+    "Year $\\times$ Conservative",
+    "Post-2010s (2010--2021)",
+    "Post-2010s $\\times$ Moderate",
+    "Post-2010s $\\times$ Conservative",
+    "Year $\\times$ Post-2010s",
+    "Year $\\times$ Post-2010s $\\times$ Moderate",
+    "Year $\\times$ Post-2010s $\\times$ Conservative"
+  ),
+  custom.gof.rows = list(
+    "Including Year 2021" = c("No", "No")
+  ),
+  # Don't incluce \\item in custom.note
+  custom.note = "%stars\\\\[0.6em]\n {\\it Note:} Numbers in parentheses represent standard errors. The reference category for political party affiliation is Democrat. The reference category for political ideology is liberal. Age\\textsuperscript{2} is a squared term.",
+  digits = 3,
+  caption = "Logit Models 2 Predicting Public Confidence in Science (I)",
+  caption.above = TRUE,
+  label = "table:LogitPre2021Models2",
+  booktabs = TRUE,
+  dcolumn = TRUE,
+  longtable = TRUE,
+  threeparttable = TRUE,
+  use.packages = FALSE,
+  include.aic = TRUE,
+  include.bic = TRUE,
+  include.loglik = TRUE,
+  include.deviance = FALSE,
+  include.nobs = TRUE
+)
+
+
+# Logistic regression models (pre 2010) -----------------------------------
+
+model_2a_pre2010 <- glm(
+  consci ~ year + female + nonwhite + educ + highschool + bachelor + graduate +
+    south + attend + realinc + age + I(age^2) + independent + republican +
+    moderate + conservative + postreagan + bush + moderate:year +
+    conservative:year,
+  family = binomial(link = "logit"),
+  data = gss_pre_2010
+)
+
+summary(model_2a_pre2010)
+
+
 # Logistic regression models (including 2021) -----------------------------
 
 model_4 <- glm(
@@ -155,16 +250,31 @@ model_4 <- glm(
 
 summary(model_4)
 
-model_5 <- glm(
+
+model_5a <- glm(
   consci ~ year + female + educ + highschool + bachelor + graduate + attend +
-    realinc + age + I(age ^ 2) + independent + republican + moderate +
-    conservative + postreagan + bush + posttrump + covid19 + moderate * year +
-    conservative * year,
+    realinc + age + I(age^2) + independent + republican + moderate +
+    conservative + postreagan + bush + posttrump + covid19 + moderate:year +
+    conservative:year,
   family = binomial(link = "logit"),
   data = gss_incl_2021
 )
 
-summary(model_5)
+summary(model_5a)
+
+model_5b <- glm(
+  consci ~ year + female + educ + highschool + bachelor + graduate + attend +
+    realinc + age + I(age^2) + independent + republican + moderate +
+    conservative + postreagan + bush + posttrump + covid19 + moderate:year +
+    conservative:year + post2010s + moderate:post2010s +
+    conservative:post2010s + year:post2010s + moderate:post2010s:year +
+    conservative:post2010s:year,
+  family = binomial(link = "logit"),
+  data = gss_incl_2021_incl_post2010s
+)
+
+summary(model_5b)
+
 
 model_6 <- glm(
   consci ~ year + female + educ + highschool + bachelor + graduate + attend +
@@ -183,9 +293,9 @@ summary(model_6)
 ## Export regression table to LaTeX ---------------------------------------
 
 texreg_custom(
-  l = list(model_4, model_5, model_6),
+  l = list(model_4, model_5a, model_6),
   # Use "path" instead of "file" when calling texreg_custom()
-  path = "../reports/figures/logit-incl-2021.tex",
+  path = "../reports/figures/table-logit-incl-2021.tex",
   stars = c(0.01, 0.05, 0.1),
   custom.model.names = c("Model 4", "Model 5", "Model 6"),
   custom.coef.names = c(
@@ -241,14 +351,73 @@ texreg_custom(
 )
 
 
+texreg_custom(
+  l = list(model_5a, model_5b),
+  # Use "path" instead of "file" when calling texreg_custom()
+  path = "../reports/figures/table-logit-incl-2021-models-5.tex",
+  stars = c(0.01, 0.05, 0.1),
+  custom.model.names = c("Model 5", "Model 5 Variation"),
+  custom.coef.names = c(
+    "Constant",
+    "Year",
+    "Female",
+    "Education (years)",
+    "High School",
+    "Bachelor",
+    "Graduate",
+    "Church Attendance",
+    "Family Income",
+    "Age",
+    "Age\\textsuperscript{2}",
+    "Independent",
+    "Republican",
+    "Moderate",
+    "Conservative",
+    "Post-Reagan (1981--2021)",
+    "Bush (2001--2008)",
+    "Post-Trump (2017--2021)",
+    "COVID-19 (2020--2021)",
+    "Year $\\times$ Moderate",
+    "Year $\\times$ Conservative",
+    "Post-2010s (2010--2021)",
+    "Post-2010s $\\times$ Moderate",
+    "Post-2010s $\\times$ Conservative",
+    "Year $\\times$ Post-2010s",
+    "Year $\\times$ Post-2010s $\\times$ Moderate",
+    "Year $\\times$ Post-2010s $\\times$ Conservative"
+  ),
+  custom.gof.rows = list(
+    "Including Year 2021" = c("Yes", "Yes")
+  ),
+  # Don't incluce \\item in custom.note
+  custom.note = '%stars\\\\[0.6em]\n {\\it Note:} The variables "Non-White" and "South" are excluded from models 4, 5, and 6. Numbers in parentheses represent standard errors. The reference category for political party affiliation is Democrat. The reference category for political ideology is liberal. Age\\textsuperscript{2} is a squared term.',
+  digits = 3,
+  caption = "Logit Models 5 Predicting Public Confidence in Science (II)",
+  caption.above = TRUE,
+  label = "table:LogitIncl2021Models5",
+  booktabs = TRUE,
+  dcolumn = TRUE,
+  longtable = TRUE,
+  threeparttable = TRUE,
+  use.packages = FALSE,
+  include.aic = TRUE,
+  include.bic = TRUE,
+  include.loglik = TRUE,
+  include.deviance = FALSE,
+  include.nobs = TRUE
+)
+
+
 # Marginal effects (pre 2021) ---------------------------------------------
 
 margins_model_1 <- margins(model_1)
-margins_model_2 <- margins(model_2)
+margins_model_2a <- margins(model_2a)
+margins_model_2b <- margins(model_2b)
 margins_model_3 <- margins(model_3)
 
 margins_model_1_table <- summary(margins_model_1)
-margins_model_2_table <- summary(margins_model_2)
+margins_model_2a_table <- summary(margins_model_2a)
+margins_model_2b_table <- summary(margins_model_2b)
 margins_model_3_table <- summary(margins_model_3)
 
 
@@ -256,7 +425,7 @@ margins_model_3_table <- summary(margins_model_3)
 
 for (margins_table in c(
   "margins_model_1_table",
-  "margins_model_2_table",
+  "margins_model_2a_table",
   "margins_model_3_table")
 ) {
   margins_table_new <- get(margins_table) %>%
@@ -291,7 +460,7 @@ for (margins_table in c(
   assign(margins_table, margins_table_new)
 }
 
-margins_model_2_table <- margins_model_2_table %>%
+margins_model_2a_table <- margins_model_2a_table %>%
   add_row(factor = "moderate * year") %>%
   add_row(factor = "conservative * year")
 
@@ -307,9 +476,9 @@ margins_model_3_table <- margins_model_3_table %>%
 ## Export marginal effects table to LaTeX ---------------------------------
 
 texreg_custom(
-  l = list(model_1, model_2, model_3),
+  l = list(model_1, model_2a, model_3),
   # Use "path" instead of "file" when calling texreg_custom()
-  path = "../reports/figures/logit-pre-2021-margins.tex",
+  path = "../reports/figures/table-logit-pre-2021-margins.tex",
   stars = c(0.01, 0.05, 0.1),
   custom.model.names = c("Model 1", "Model 2", "Model 3"),
   custom.coef.names = c(
@@ -350,17 +519,17 @@ texreg_custom(
   digits = 3,
   override.coef = list(
     margins_model_1_table$AME,
-    margins_model_2_table$AME,
+    margins_model_2a_table$AME,
     margins_model_3_table$AME
   ),
   override.se = list(
     margins_model_1_table$SE,
-    margins_model_2_table$SE,
+    margins_model_2a_table$SE,
     margins_model_3_table$SE
   ),
   override.pvalues = list(
     margins_model_1_table$p,
-    margins_model_2_table$p,
+    margins_model_2a_table$p,
     margins_model_3_table$p
   ),
   omit.coef = "Intercept|I.age|year.moderate|year.conservative|moderate.postreagan|moderate.bush|moderate.posttrump|conservative.postreagan|conservative.bush|conservative.posttrump",
@@ -384,11 +553,13 @@ texreg_custom(
 # Marginal effects (including 2021) ---------------------------------------
 
 margins_model_4 <- margins(model_4)
-margins_model_5 <- margins(model_5)
+margins_model_5a <- margins(model_5a)
+margins_model_5b <- margins(model_5b)
 margins_model_6 <- margins(model_6)
 
 margins_model_4_table <- summary(margins_model_4)
-margins_model_5_table <- summary(margins_model_5)
+margins_model_5a_table <- summary(margins_model_5a)
+margins_model_5b_table <- summary(margins_model_5b)
 margins_model_6_table <- summary(margins_model_6)
 
 
@@ -396,7 +567,7 @@ margins_model_6_table <- summary(margins_model_6)
 
 for (margins_table in c(
   "margins_model_4_table",
-  "margins_model_5_table",
+  "margins_model_5a_table",
   "margins_model_6_table")
 ) {
   margins_table_new <- get(margins_table) %>%
@@ -432,7 +603,7 @@ for (margins_table in c(
   assign(margins_table, margins_table_new)
 }
 
-margins_model_5_table <- margins_model_5_table %>%
+margins_model_5a_table <- margins_model_5a_table %>%
   add_row(factor = "moderate * year") %>%
   add_row(factor = "conservative * year")
 
@@ -450,9 +621,9 @@ margins_model_6_table <- margins_model_6_table %>%
 ## Export marginal effects table to LaTeX ---------------------------------
 
 texreg_custom(
-  l = list(model_4, model_5, model_6),
+  l = list(model_4, model_5a, model_6),
   # Use "path" instead of "file" when calling texreg_custom()
-  path = "../reports/figures/logit-incl-2021-margins.tex",
+  path = "../reports/figures/table-logit-incl-2021-margins.tex",
   stars = c(0.01, 0.05, 0.1),
   custom.model.names = c("Model 4", "Model 5", "Model 6"),
   custom.coef.names = c(
@@ -494,17 +665,17 @@ texreg_custom(
   digits = 3,
   override.coef = list(
     margins_model_4_table$AME,
-    margins_model_5_table$AME,
+    margins_model_5a_table$AME,
     margins_model_6_table$AME
   ),
   override.se = list(
     margins_model_4_table$SE,
-    margins_model_5_table$SE,
+    margins_model_5a_table$SE,
     margins_model_6_table$SE
   ),
   override.pvalues = list(
     margins_model_4_table$p,
-    margins_model_5_table$p,
+    margins_model_5a_table$p,
     margins_model_6_table$p
   ),
   omit.coef = "Intercept|I.age|year.moderate|year.conservative|moderate.postreagan|moderate.bush|moderate.posttrump|moderate.covid19|conservative.postreagan|conservative.bush|conservative.posttrump|conservative.covid19",
@@ -528,16 +699,20 @@ texreg_custom(
 
 save(
   model_1,
-  model_2,
+  model_2a,
+  model_2b,
   model_3,
   model_4,
-  model_5,
+  model_5a,
+  model_5b,
   model_6,
   margins_model_1,
-  margins_model_2,
+  margins_model_2a,
+  margins_model_2b,
   margins_model_3,
   margins_model_4,
-  margins_model_5,
+  margins_model_5a,
+  margins_model_5b,
   margins_model_6,
   file = "../data/models.RData"
 )

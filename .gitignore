@@ -2,6 +2,13 @@
 gss-2021.dta
 gss-2021-codebook.pdf
 gss-2021-methodological-primer.pdf
+models.RData
+
+# Thesis files
+thesis.pdf
+thesis.tex
+title-page.pdf
+title-page.tex
 
 # Bibliography
 *.bbl
