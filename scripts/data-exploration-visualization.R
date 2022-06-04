@@ -30,7 +30,6 @@ source("ggplot2-themes.R")
 
 load("../data/gss.RData")
 load("../data/gss-with-na.RData")
-# load("../data/gss-raw.RData")
 
 
 # Missing values ----------------------------------------------------------
@@ -44,22 +43,37 @@ missing_values <- as.list(colSums(is.na(gss_with_na))) %>%
   # Reorder columns
   select(variable, n_missing_values) %>%
   # Add fraction column
-  mutate(pct_missing_values = round(n_missing_values / nrow(gss_with_na),
-                                         digits = 3))
+  mutate(
+    pct_missing_values = round(
+      n_missing_values / nrow(gss_with_na),
+      digits = 3
+    )
+  )
 
 n_obs_2021 <- nrow(gss_with_na %>% filter(year == 2021))
 
 
 ## Missing values count ---------------------------------------------------
 
-plot_missing_values_n <- missing_values %>%
+plot_missing_values_count <- missing_values %>%
   filter(n_missing_values > 0) %>%
-  ggplot(mapping = aes(
-    x = reorder(variable, desc(n_missing_values)),
-    y = n_missing_values)) +
-  geom_col(fill = "#262626") +
-  geom_text(mapping = aes(label = formatC(
-    n_missing_values, format = "d", big.mark = ",")), hjust = -0.125) +
+  ggplot(
+    mapping = aes(
+      x = reorder(variable, desc(n_missing_values)),
+      y = n_missing_values
+    )
+  ) +
+  geom_col(fill = theme_thesis_colors$basic$primary) +
+  geom_text(
+    mapping = aes(
+      label = formatC(
+        n_missing_values,
+        format = "d",
+        big.mark = ","
+      )
+    ),
+    hjust = -0.125
+  ) +
   # Reverse the order of the y-column
   scale_x_discrete(limits = rev) +
   scale_y_continuous(labels = scales::comma) +
@@ -89,11 +103,11 @@ plot_missing_values_n <- missing_values %>%
     panel.grid.major.y = element_blank()
   )
 
-plot_missing_values_n
+plot_missing_values_count
 
 ggsave(
-  filename = "../figures/missing-values-n.png",
-  plot = plot_missing_values_n,
+  filename = "../figures/missing-values-count.png",
+  plot = plot_missing_values_count,
   device = agg_png,
   res = 300,
   width = 16,
@@ -107,14 +121,18 @@ dev.off()
 
 ## Missing values proportion ----------------------------------------------
 
-plot_missing_values_pct <- missing_values %>%
+plot_missing_values_fraction <- missing_values %>%
   filter(n_missing_values > 0) %>%
   # Change order of columns (not necessary for plotting)
   arrange(desc(pct_missing_values)) %>%
   # Change order of factor levels
-  mutate(variable = fct_reorder(variable,
-                                pct_missing_values,
-                                .desc = TRUE)) %>%
+  mutate(
+    variable = fct_reorder(
+      variable,
+      pct_missing_values,
+      .desc = TRUE
+    )
+  ) %>%
   mutate(pct_present_values = 1 - pct_missing_values) %>%
   gather(
     key = measure,
@@ -128,16 +146,28 @@ plot_missing_values_pct <- missing_values %>%
     # Reverse the fill order so that missing values go first
     position = position_stack(reverse = TRUE)
   ) +
-  geom_text(mapping = aes(label = ifelse(measure == "pct_missing_values",
-                                         scales::percent(value, accuracy = 0.1),
-                                         "")),
-            hjust = -0.125) +
+  geom_text(
+    mapping = aes(
+      label = ifelse(
+        measure == "pct_missing_values",
+        scales::percent(value, accuracy = 0.1),
+        ""
+      )
+    ),
+    hjust = -0.125
+  ) +
   scale_y_discrete(limits = rev) +
   scale_x_continuous(labels = scales::percent) +
-  scale_fill_manual(labels = c("pct_missing_values" = "Missing",
-                               "pct_present_values" = "Present"),
-                    values = c("pct_missing_values" = "#262626",
-                               "pct_present_values" = "#E5E5E5")) +
+  scale_fill_manual(
+    labels = c(
+      "pct_missing_values" = "Missing",
+      "pct_present_values" = "Present"
+    ),
+    values = c(
+      "pct_missing_values" = theme_thesis_colors$basic$primary,
+      "pct_present_values" = theme_thesis_colors$basic$tertiary
+    )
+  ) +
   labs(
     x = "",
     y = "",
@@ -158,11 +188,11 @@ plot_missing_values_pct <- missing_values %>%
     panel.grid.major.y = element_blank()
   )
 
-plot_missing_values_pct
+plot_missing_values_fraction
 
 ggsave(
-  filename = "../figures/missing-values-pct.png",
-  plot = plot_missing_values_pct,
+  filename = "../figures/missing-values-fraction.png",
+  plot = plot_missing_values_fraction,
   device = agg_png,
   res = 300,
   width = 16,
@@ -180,17 +210,19 @@ head(gss_with_na)
 
 distribution_na <- gss_with_na %>%
   filter(is.na(realinc)) %>%
-  select(-year,
-         -id,
-         -educ,
-         -attend,
-         -realinc,
-         -age,
-         -postreagan,
-         -bush,
-         -posttrump,
-         -covid19,
-         -cohort) %>%
+  select(
+    -year,
+    -id,
+    -educ,
+    -attend,
+    -realinc,
+    -age,
+    -postreagan,
+    -bush,
+    -posttrump,
+    -covid19,
+    -cohort
+  ) %>%
   gather(
     key = variable,
     value = value,
@@ -198,17 +230,19 @@ distribution_na <- gss_with_na %>%
   )
 
 distribution <- gss %>%
-  select(-year,
-         -id,
-         -educ,
-         -attend,
-         -realinc,
-         -age,
-         -postreagan,
-         -bush,
-         -posttrump,
-         -covid19,
-         -cohort) %>%
+  select(
+    -year,
+    -id,
+    -educ,
+    -attend,
+    -realinc,
+    -age,
+    -postreagan,
+    -bush,
+    -posttrump,
+    -covid19,
+    -cohort
+  ) %>%
   gather(
     key = variable,
     value = value,
@@ -237,17 +271,23 @@ plot_missing_values_distributions <- ggplot() +
   scale_x_continuous(breaks = c(0, 1)) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
   scale_color_manual(
-    values = c("Data Without Missing Values" = "#737373",
-               "Data With Missing Income Values" = "#262626")
+    values = c(
+      "Data Without Missing Values" = theme_thesis_colors$basic$secondary,
+      "Data With Missing Income Values" = theme_thesis_colors$basic$primary
+    )
   ) +
   scale_linetype_manual(
     values = c("Data Without Missing Values" = "dashed",
                "Data With Missing Income Values" = "solid")
   ) +
   scale_fill_manual(
-    values = alpha(c("Data Without Missing Values" = "#E5E5E5",
-                     "Data With Missing Income Values" = "#737373"),
-                   0.2)
+    values = alpha(
+      c(
+        "Data Without Missing Values" = theme_thesis_colors$basic$tertiary,
+        "Data With Missing Income Values" = theme_thesis_colors$basic$secondary
+      ),
+      0.2
+    )
   ) +
   labs(
     x = "Value",
@@ -348,65 +388,6 @@ var_label(consci_by_polviews_with_na$polviews) <-
   "think of self as liberal or conservative"
 
 
-## Data selection from gss_raw (alternative to gss_with_na) ---------------
-
-# consci_by_polviews_raw <- gss_raw %>%
-#   # Select relevant columns
-#   select(year, consci, polviews) %>%
-#   # Convert consci and polviews columns to factors
-#   mutate(consci = as_factor(consci),
-#          polviews = as_factor(polviews))
-# 
-# glimpse(consci_by_polviews_raw)
-# 
-# unique(consci_by_polviews_raw$consci)
-# unique(consci_by_polviews_raw$polviews)
-# 
-# # Re-code factor levels
-# 
-# consci_by_polviews_raw$consci <-
-#   recode_factor(
-#     consci_by_polviews_raw$consci,
-#     `a great deal` = 1,
-#     `only some` = 0,
-#     `hardly any` = 0
-#   )
-# 
-# consci_by_polviews_raw$polviews <-
-#   recode_factor(
-#     consci_by_polviews_raw$polviews,
-#     `extremely conservative` = "Conservative",
-#     `conservative` = "Conservative",
-#     `slightly conservative` = "Conservative",
-#     `extremely liberal` = "Liberal",
-#     `liberal` = "Liberal",
-#     `slightly liberal` = "Liberal",
-#     `moderate, middle of the road` = "Moderate"
-#   )
-# 
-# unique(consci_by_polviews_raw$consci)
-# unique(consci_by_polviews_raw$polviews)
-# 
-# # Convert "consci" variable to numeric
-# consci_by_polviews_raw <- consci_by_polviews_raw %>%
-#   mutate(consci = as.numeric(as.character(consci)))
-# 
-# glimpse(consci_by_polviews_raw)
-# 
-# consci_by_polviews_raw <- consci_by_polviews_raw %>%
-#   # Omit all records containing NA values
-#   na.omit() %>%
-#   # Group data by year and political ideology
-#   group_by(year, polviews) %>%
-#   # Summarize grouped data using the mean function
-#   summarize(consci_mean = mean(consci)) %>%
-#   # Group data by political ideology
-#   group_by(polviews) %>%
-#   # Calculate the three-period moving average for the group-specific means of
-#   # confidence in science using the "zoo" package
-#   mutate(consci_moving_mean = zoo::rollmean(consci_mean, k = 3, fill = NA))
-
-
 ### Figure 1: Trust in science by political ideology ----------------------
 
 consci_polviews <- function(data) {
@@ -426,9 +407,15 @@ consci_polviews <- function(data) {
     # Cahgne the y-axis scale to percent
     scale_y_continuous(label = scales::percent_format(accuracy = 1)) +
     # Change the scale limits of the y-axis
-    coord_cartesian(ylim = c(0.3, 0.7)) +
+    coord_cartesian(ylim = c(0.2, 0.8)) +
     # Set the colors for the different groups
-    scale_color_manual(values = c("#E63946", "#1D3557", "#A8DADC")) +
+    scale_color_manual(
+      values = c(
+        theme_thesis_colors$ideology$red,
+        theme_thesis_colors$ideology$blue,
+        theme_thesis_colors$ideology$gray
+      )
+    ) +
     # Set the axis labels
     labs(
       x = "Year",
@@ -493,9 +480,15 @@ consci_polviews_latex <- function(data) {
     # Cahgne the y-axis scale to percent
     scale_y_continuous(label = scales::percent_format(accuracy = 1)) +
     # Change the scale limits of the y-axis
-    coord_cartesian(ylim = c(0.3, 0.7)) +
-    # Set the colors for the different groups using a gray scale
-    scale_color_grey(start = 0, end = 0.4) +
+    coord_cartesian(ylim = c(0.2, 0.8)) +
+    # Set the colors for the different groups
+    scale_color_manual(
+      values = c(
+        theme_thesis_colors$ideology$red,
+        theme_thesis_colors$ideology$blue,
+        theme_thesis_colors$ideology$gray
+      )
+    ) +
     # Set the axis labels
     labs(x = "Year",
          y = "Trust in Science (Unadjusted Means)") +
