@@ -17,7 +17,7 @@ library(tidyverse)
 
 # Source scripts ----------------------------------------------------------
 
-# A script that includes custom stargazer table exporting functions
+# A script that includes custom table exporting functions
 source("custom-tables.R")
 
 
@@ -65,7 +65,7 @@ model_1 <- glm(
 summary(model_1)
 
 
-model_2a <- glm(
+model_2 <- glm(
   consci ~ year + female + nonwhite + educ + highschool + bachelor + graduate +
     south + attend + realinc + age + I(age^2) + independent + republican +
     moderate + conservative + postreagan + bush + posttrump + moderate:year +
@@ -74,9 +74,9 @@ model_2a <- glm(
   data = gss_pre_2021
 )
 
-summary(model_2a)
+summary(model_2)
 
-model_2b <- glm(
+model_2_variation <- glm(
   consci ~ year + female + nonwhite + educ + highschool + bachelor + graduate +
     south + attend + realinc + age + I(age^2) + independent + republican +
     moderate + conservative + postreagan + bush + posttrump + moderate:year +
@@ -87,7 +87,7 @@ model_2b <- glm(
   data = gss_pre_2021_incl_post2010s
 )
 
-summary(model_2b)
+summary(model_2_variation)
 
 
 model_3 <- glm(
@@ -109,7 +109,7 @@ summary(model_3)
 # getMethod("extract", "glm")
 
 texreg_custom(
-  l = list(model_1, model_2a, model_3),
+  l = list(model_1, model_2, model_3),
   # Use "path" instead of "file" when calling texreg_custom()
   path = "../reports/figures/table-logit-pre-2021.tex",
   stars = c(0.01, 0.05, 0.1),
@@ -167,7 +167,7 @@ texreg_custom(
 
 
 texreg_custom(
-  l = list(model_2a, model_2b),
+  l = list(model_2, model_2_variation),
   # Use "path" instead of "file" when calling texreg_custom()
   path = "../reports/figures/table-logit-pre-2021-models-2.tex",
   stars = c(0.01, 0.05, 0.1),
@@ -226,7 +226,7 @@ texreg_custom(
 
 # Logistic regression models (pre 2010) -----------------------------------
 
-model_2a_pre2010 <- glm(
+model_2_pre2010 <- glm(
   consci ~ year + female + nonwhite + educ + highschool + bachelor + graduate +
     south + attend + realinc + age + I(age^2) + independent + republican +
     moderate + conservative + postreagan + bush + moderate:year +
@@ -235,7 +235,7 @@ model_2a_pre2010 <- glm(
   data = gss_pre_2010
 )
 
-summary(model_2a_pre2010)
+summary(model_2_pre2010)
 
 
 # Logistic regression models (including 2021) -----------------------------
@@ -251,7 +251,7 @@ model_4 <- glm(
 summary(model_4)
 
 
-model_5a <- glm(
+model_5 <- glm(
   consci ~ year + female + educ + highschool + bachelor + graduate + attend +
     realinc + age + I(age^2) + independent + republican + moderate +
     conservative + postreagan + bush + posttrump + covid19 + moderate:year +
@@ -260,9 +260,9 @@ model_5a <- glm(
   data = gss_incl_2021
 )
 
-summary(model_5a)
+summary(model_5)
 
-model_5b <- glm(
+model_5_variation <- glm(
   consci ~ year + female + educ + highschool + bachelor + graduate + attend +
     realinc + age + I(age^2) + independent + republican + moderate +
     conservative + postreagan + bush + posttrump + covid19 + moderate:year +
@@ -273,7 +273,7 @@ model_5b <- glm(
   data = gss_incl_2021_incl_post2010s
 )
 
-summary(model_5b)
+summary(model_5_variation)
 
 
 model_6 <- glm(
@@ -293,7 +293,7 @@ summary(model_6)
 ## Export regression table to LaTeX ---------------------------------------
 
 texreg_custom(
-  l = list(model_4, model_5a, model_6),
+  l = list(model_4, model_5, model_6),
   # Use "path" instead of "file" when calling texreg_custom()
   path = "../reports/figures/table-logit-incl-2021.tex",
   stars = c(0.01, 0.05, 0.1),
@@ -352,7 +352,7 @@ texreg_custom(
 
 
 texreg_custom(
-  l = list(model_5a, model_5b),
+  l = list(model_5, model_5_variation),
   # Use "path" instead of "file" when calling texreg_custom()
   path = "../reports/figures/table-logit-incl-2021-models-5.tex",
   stars = c(0.01, 0.05, 0.1),
@@ -411,13 +411,13 @@ texreg_custom(
 # Marginal effects (pre 2021) ---------------------------------------------
 
 margins_model_1 <- margins(model_1)
-margins_model_2a <- margins(model_2a)
-margins_model_2b <- margins(model_2b)
+margins_model_2 <- margins(model_2)
+margins_model_2_variation <- margins(model_2_variation)
 margins_model_3 <- margins(model_3)
 
 margins_model_1_table <- summary(margins_model_1)
-margins_model_2a_table <- summary(margins_model_2a)
-margins_model_2b_table <- summary(margins_model_2b)
+margins_model_2_table <- summary(margins_model_2)
+margins_model_2_variation_table <- summary(margins_model_2_variation)
 margins_model_3_table <- summary(margins_model_3)
 
 
@@ -425,7 +425,7 @@ margins_model_3_table <- summary(margins_model_3)
 
 for (margins_table in c(
   "margins_model_1_table",
-  "margins_model_2a_table",
+  "margins_model_2_table",
   "margins_model_3_table")
 ) {
   margins_table_new <- get(margins_table) %>%
@@ -460,7 +460,7 @@ for (margins_table in c(
   assign(margins_table, margins_table_new)
 }
 
-margins_model_2a_table <- margins_model_2a_table %>%
+margins_model_2_table <- margins_model_2_table %>%
   add_row(factor = "moderate * year") %>%
   add_row(factor = "conservative * year")
 
@@ -476,7 +476,7 @@ margins_model_3_table <- margins_model_3_table %>%
 ## Export marginal effects table to LaTeX ---------------------------------
 
 texreg_custom(
-  l = list(model_1, model_2a, model_3),
+  l = list(model_1, model_2, model_3),
   # Use "path" instead of "file" when calling texreg_custom()
   path = "../reports/figures/table-logit-pre-2021-margins.tex",
   stars = c(0.01, 0.05, 0.1),
@@ -519,17 +519,17 @@ texreg_custom(
   digits = 3,
   override.coef = list(
     margins_model_1_table$AME,
-    margins_model_2a_table$AME,
+    margins_model_2_table$AME,
     margins_model_3_table$AME
   ),
   override.se = list(
     margins_model_1_table$SE,
-    margins_model_2a_table$SE,
+    margins_model_2_table$SE,
     margins_model_3_table$SE
   ),
   override.pvalues = list(
     margins_model_1_table$p,
-    margins_model_2a_table$p,
+    margins_model_2_table$p,
     margins_model_3_table$p
   ),
   omit.coef = "Intercept|I.age|year.moderate|year.conservative|moderate.postreagan|moderate.bush|moderate.posttrump|conservative.postreagan|conservative.bush|conservative.posttrump",
@@ -553,13 +553,13 @@ texreg_custom(
 # Marginal effects (including 2021) ---------------------------------------
 
 margins_model_4 <- margins(model_4)
-margins_model_5a <- margins(model_5a)
-margins_model_5b <- margins(model_5b)
+margins_model_5 <- margins(model_5)
+margins_model_5_variation <- margins(model_5_variation)
 margins_model_6 <- margins(model_6)
 
 margins_model_4_table <- summary(margins_model_4)
-margins_model_5a_table <- summary(margins_model_5a)
-margins_model_5b_table <- summary(margins_model_5b)
+margins_model_5_table <- summary(margins_model_5)
+margins_model_5_variation_table <- summary(margins_model_5_variation)
 margins_model_6_table <- summary(margins_model_6)
 
 
@@ -567,7 +567,7 @@ margins_model_6_table <- summary(margins_model_6)
 
 for (margins_table in c(
   "margins_model_4_table",
-  "margins_model_5a_table",
+  "margins_model_5_table",
   "margins_model_6_table")
 ) {
   margins_table_new <- get(margins_table) %>%
@@ -603,7 +603,7 @@ for (margins_table in c(
   assign(margins_table, margins_table_new)
 }
 
-margins_model_5a_table <- margins_model_5a_table %>%
+margins_model_5_table <- margins_model_5_table %>%
   add_row(factor = "moderate * year") %>%
   add_row(factor = "conservative * year")
 
@@ -621,7 +621,7 @@ margins_model_6_table <- margins_model_6_table %>%
 ## Export marginal effects table to LaTeX ---------------------------------
 
 texreg_custom(
-  l = list(model_4, model_5a, model_6),
+  l = list(model_4, model_5, model_6),
   # Use "path" instead of "file" when calling texreg_custom()
   path = "../reports/figures/table-logit-incl-2021-margins.tex",
   stars = c(0.01, 0.05, 0.1),
@@ -665,17 +665,17 @@ texreg_custom(
   digits = 3,
   override.coef = list(
     margins_model_4_table$AME,
-    margins_model_5a_table$AME,
+    margins_model_5_table$AME,
     margins_model_6_table$AME
   ),
   override.se = list(
     margins_model_4_table$SE,
-    margins_model_5a_table$SE,
+    margins_model_5_table$SE,
     margins_model_6_table$SE
   ),
   override.pvalues = list(
     margins_model_4_table$p,
-    margins_model_5a_table$p,
+    margins_model_5_table$p,
     margins_model_6_table$p
   ),
   omit.coef = "Intercept|I.age|year.moderate|year.conservative|moderate.postreagan|moderate.bush|moderate.posttrump|moderate.covid19|conservative.postreagan|conservative.bush|conservative.posttrump|conservative.covid19",
@@ -699,20 +699,20 @@ texreg_custom(
 
 save(
   model_1,
-  model_2a,
-  model_2b,
+  model_2,
+  model_2_variation,
   model_3,
   model_4,
-  model_5a,
-  model_5b,
+  model_5,
+  model_5_variation,
   model_6,
   margins_model_1,
-  margins_model_2a,
-  margins_model_2b,
+  margins_model_2,
+  margins_model_2_variation,
   margins_model_3,
   margins_model_4,
-  margins_model_5a,
-  margins_model_5b,
+  margins_model_5,
+  margins_model_5_variation,
   margins_model_6,
   file = "../data/models.RData"
 )

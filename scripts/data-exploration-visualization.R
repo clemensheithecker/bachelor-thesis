@@ -498,7 +498,7 @@ consci_polviews_latex <- function(data) {
 }
 
 tikz(
-  "../reports/figures/consci-by-polviews.tex",
+  "../reports/figures/figure-consci-by-polviews.tex",
   width = 0.95 * 16 / 2.54,
   height = 0.95 * 3 / 4 * 16 / 2.54,
   sanitize = TRUE,
@@ -512,7 +512,7 @@ consci_by_polviews %>%
 dev.off()
 
 tikz(
-  "../reports/figures/consci-by-polviews-with-na.tex",
+  "../reports/figures/figure-consci-by-polviews-with-na.tex",
   width = 0.95 * 16 / 2.54,
   height = 0.95 * 3 / 4 * 16 / 2.54,
   sanitize = TRUE,
