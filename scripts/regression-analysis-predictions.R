@@ -12,6 +12,8 @@ library(tidyverse)
 # A graphic device which supports custom fonts
 library(ragg)
 
+library(xtable)
+
 
 # Load data ---------------------------------------------------------------
 
@@ -145,6 +147,31 @@ rm(predict_polview_pre_2021_list)
 predict_polview_pre_2021
 
 
+### Output Prediction Table as LaTeX --------------------------------------
+
+predict_polview_pre_2021_xtable <- predict_polview_pre_2021 %>%
+  mutate(polview = factor(
+    polview,
+    levels = c("conservative", "liberal", "moderate"),
+    labels = c("Conservative", "Liberal", "Moderate")
+  )) %>%
+  arrange(polview) %>%
+  rename(
+    "Political Ideology" = polview,
+    "Model 1" = fit_model_1,
+    "Model 2" = fit_model_2,
+    "Model 2 Var." = fit_model_2_variation,
+    "Model 3" = fit_model_3
+  )
+
+predictions_to_latex(
+  df = predict_polview_pre_2021_xtable,
+  file = "../reports/figures/table-predict-polview-pre-2021",
+  title = "MER Predicted Probabilities of Sharing \\enquote{a great deal} of Trust in Science by Political Ideology (I)",
+  label = "table:PredictPolviewPre2021"
+)
+
+
 ## Including 2021 ---------------------------------------------------------
 
 mean_polview_incl_2021 <- gss_incl_2021 %>%
@@ -197,6 +224,31 @@ rm(predict_polview_incl_2021_list)
 predict_polview_incl_2021
 
 
+### Output Prediction Table as LaTeX --------------------------------------
+
+predict_polview_incl_2021_xtable <- predict_polview_incl_2021 %>%
+  mutate(polview = factor(
+    polview,
+    levels = c("conservative", "liberal", "moderate"),
+    labels = c("Conservative", "Liberal", "Moderate")
+  )) %>%
+  arrange(polview) %>%
+  rename(
+    "Political Ideology" = polview,
+    "Model 4" = fit_model_4,
+    "Model 5" = fit_model_5,
+    "Model 5 Var." = fit_model_5_variation,
+    "Model 6" = fit_model_6
+  )
+
+predictions_to_latex(
+  df = predict_polview_incl_2021_xtable,
+  file = "../reports/figures/table-predict-polview-incl-2021",
+  title = "MER Predicted Probabilities of Sharing \\enquote{a great deal} of Trust in Science by Political Ideology (II)",
+  label = "table:PredictPolviewIncl2021"
+)
+
+
 # Predicted probability by political ideology (incl. post-Trump) ----------
 
 ## Pre 2021 ---------------------------------------------------------------
@@ -239,6 +291,122 @@ predict_polview_posttrump_pre_2021 <- Reduce(
 rm(predict_polview_posttrump_pre_2021_list)
 
 predict_polview_posttrump_pre_2021
+
+
+### Output Prediction Table as LaTeX --------------------------------------
+
+predict_polview_posttrump_pre_2021_xtable <-
+  predict_polview_posttrump_pre_2021 %>%
+  mutate(polview = factor(
+    polview,
+    levels = c("conservative", "liberal", "moderate"),
+    labels = c("Conservative", "Liberal", "Moderate")
+  )) %>%
+  mutate(posttrump = factor(
+    posttrump,
+    levels = c(0, 1),
+    labels = c("pre-Trump", "post-Trump")
+  )) %>%
+  arrange(polview) %>%
+  unite(
+    `Polview by Time Period`,
+    polview:posttrump,
+    remove = TRUE,
+    sep = ", "
+  ) %>%
+  rename(
+    "Model 1" = fit_model_1,
+    "Model 2" = fit_model_2,
+    "Model 2 Var." = fit_model_2_variation,
+    "Model 3" = fit_model_3
+  )
+
+predictions_to_latex(
+  df = predict_polview_posttrump_pre_2021_xtable,
+  file = "../reports/figures/table-predict-polview-trump-pre-2021",
+  title = "MER Predicted Probabilities of Sharing \\enquote{a great deal} of Trust in Science by Political Ideology Before and After Donald Trump's Presidential Election (I)",
+  label = "table:PredictPolviewTrumpPre2021",
+  footnote = "Pre-Trump and post-Trump refer to the time periods before 2016 and 2016--2018, respectively."
+)
+
+
+## Including 2021 ---------------------------------------------------------
+
+mean_polview_posttrump_incl_2021 <- gss_incl_2021 %>%
+  group_by(moderate, conservative, posttrump) %>%
+  summarise(across(c(year, female:socialmedia, covid19), ~ mean(.x))) %>%
+  ungroup() %>%
+  mutate(
+    polview = case_when(
+      moderate == 0 & conservative == 0 ~ "liberal",
+      moderate == 0 & conservative == 1 ~ "conservative",
+      moderate == 1 & conservative == 0 ~ "moderate"
+    )
+  )
+
+
+predict_polview_posttrump_incl_2021_list <- list()
+
+for (model in c("model_4", "model_5", "model_5_variation", "model_6")) {
+  predict_polview_posttrump_incl_2021_list[[model]] <-
+    predict_df(
+      dataframe = mean_polview_posttrump_incl_2021,
+      regression = get(model),
+      probability = 0.95
+    ) %>%
+    select(polview, posttrump, fit, lower_bound, upper_bound) %>%
+    rename_with(
+      ~ paste0(., "_", model),
+      c(fit, lower_bound, upper_bound)
+    )
+}
+
+predict_polview_posttrump_incl_2021 <- Reduce(
+  full_join,
+  predict_polview_posttrump_incl_2021_list
+) %>%
+  select(polview, posttrump, starts_with("fit"))
+
+rm(predict_polview_posttrump_incl_2021_list)
+
+predict_polview_posttrump_incl_2021
+
+
+### Output Prediction Table as LaTeX --------------------------------------
+
+predict_polview_posttrump_incl_2021_xtable <-
+  predict_polview_posttrump_incl_2021 %>%
+  mutate(polview = factor(
+    polview,
+    levels = c("conservative", "liberal", "moderate"),
+    labels = c("Conservative", "Liberal", "Moderate")
+  )) %>%
+  mutate(posttrump = factor(
+    posttrump,
+    levels = c(0, 1),
+    labels = c("pre-Trump", "post-Trump")
+  )) %>%
+  arrange(polview) %>%
+  unite(
+    `Polview by Time Period`,
+    polview:posttrump,
+    remove = TRUE,
+    sep = ", "
+  ) %>%
+  rename(
+    "Model 4" = fit_model_4,
+    "Model 5" = fit_model_5,
+    "Model 5 Var." = fit_model_5_variation,
+    "Model 6" = fit_model_6
+  )
+
+predictions_to_latex(
+  df = predict_polview_posttrump_incl_2021_xtable,
+  file = "../reports/figures/table-predict-polview-trump-incl-2021",
+  title = "MER Predicted Probabilities of Sharing \\enquote{a great deal} of Trust in Science by Political Ideology Before and After Donald Trump's Presidential Election (II)",
+  label = "table:PredictPolviewTrumpIncl2021",
+  footnote = "Pre-Trump and post-Trump refer to the time periods before 2016 and 2016--2021, respectively."
+)
 
 
 # Predicted probability by political ideology over time -------------------

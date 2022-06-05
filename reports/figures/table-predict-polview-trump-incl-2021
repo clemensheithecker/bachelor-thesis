@@ -1,0 +1,23 @@
+\begin{table}[ht]
+\centering
+\begin{ThreePartTable}
+\begin{TableNotes}[para]
+\footnotesize{Pre-Trump and post-Trump refer to the time periods before 2016 and 2016--2021, respectively.}
+\end{TableNotes}
+\begin{tabularx}{\textwidth}{Xrrrr}
+\caption{MER Predicted Probabilities of Sharing \enquote{a great deal} of Trust in Science by Political Ideology Before and After Donald Trump's Presidential Election (II)} 
+\label{table:PredictPolviewTrumpIncl2021} \\
+  \toprule
+Polview by Time Period & Model 4 & Model 5 & Model 5 Var. & Model 6 \\ 
+  \midrule
+Conservative, pre-Trump & 0.395 & 0.401 & 0.435 & 0.405 \\ 
+  Conservative, post-Trump & 0.437 & 0.371 & 0.337 & 0.336 \\ 
+  Liberal, pre-Trump & 0.485 & 0.476 & 0.424 & 0.469 \\ 
+  Liberal, post-Trump & 0.560 & 0.622 & 0.676 & 0.688 \\ 
+  Moderate, pre-Trump & 0.377 & 0.376 & 0.390 & 0.378 \\ 
+  Moderate, post-Trump & 0.425 & 0.427 & 0.411 & 0.404 \\ 
+   \bottomrule
+   \insertTableNotes
+\end{tabularx}
+\end{ThreePartTable}
+\end{table}

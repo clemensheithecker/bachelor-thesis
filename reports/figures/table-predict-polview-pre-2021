@@ -1,0 +1,16 @@
+\begin{table}[ht]
+\centering
+\begin{ThreePartTable}
+\begin{tabularx}{\textwidth}{Xrrrr}
+\caption{MER Predicted Probabilities of Sharing \enquote{a great deal} of Trust in Science by Political Ideology (I)} 
+\label{table:PredictPolviewPre2021} \\
+  \toprule
+Political Ideology & Model 1 & Model 2 & Model 2 Var. & Model 3 \\ 
+  \midrule
+Conservative & 0.406 & 0.405 & 0.418 & 0.405 \\ 
+  Liberal & 0.475 & 0.475 & 0.462 & 0.475 \\ 
+  Moderate & 0.381 & 0.381 & 0.383 & 0.381 \\ 
+   \bottomrule
+\end{tabularx}
+\end{ThreePartTable}
+\end{table}
