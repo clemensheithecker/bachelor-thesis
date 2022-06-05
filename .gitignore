@@ -24,6 +24,7 @@ title-page.tex
 *.out
 *.snm
 *.synctex.gz
+*.tex.bak
 *.toc
 
 # R

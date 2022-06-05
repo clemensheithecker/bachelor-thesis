@@ -3,17 +3,17 @@
 \begin{ThreePartTable}
 \begin{TableNotes}[para]
 \footnotesize{$^{***}p<0.01$; $^{**}p<0.05$; $^{*}p<0.1$\\[0.6em]
- {\it Note:} The variables "Non-White" and "South" are excluded from models 4, 5, and 6. Numbers in parentheses represent standard errors. The reference category for political party affiliation is Democrat. The reference category for political ideology is liberal. Age\textsuperscript{2} is a squared term.}
+ {\it Note:} Mod., Cons., and S.M.E. are acronyms for moderate, conservative, and social media era, respectively. The variables "Non-White" and "South" are excluded from Model 4, 5, and 6. Numbers in parentheses represent standard errors. The reference category for political party affiliation is Democrat. The reference category for political ideology is liberal. Age\textsuperscript{2} is a squared term.}
 \end{TableNotes}
-\begin{tabularx}{\textwidth}{X D{.}{.}{6.6} D{.}{.}{6.6} D{.}{.}{6.6}}
+\begin{tabularx}{\textwidth}{X D{.}{.}{2.6} D{.}{.}{2.6} D{.}{.}{4.6} D{.}{.}{2.6}}
 \caption{Logit Models Predicting Public Confidence in Science (II)}
 \label{table:LogitIncl2021}\\
 \toprule
- & \multicolumn{1}{c}{Model 4} & \multicolumn{1}{c}{Model 5} & \multicolumn{1}{c}{Model 6} \\
+ & \multicolumn{1}{c}{Model 4} & \multicolumn{1}{c}{Model 5} & \multicolumn{1}{c}{Model 5 Variation} & \multicolumn{1}{c}{Model 6} \\
 \midrule
 \endfirsthead
 \toprule
- & \multicolumn{1}{c}{Model 4} & \multicolumn{1}{c}{Model 5} & \multicolumn{1}{c}{Model 6} \\
+ & \multicolumn{1}{c}{Model 4} & \multicolumn{1}{c}{Model 5} & \multicolumn{1}{c}{Model 5 Variation} & \multicolumn{1}{c}{Model 6} \\
 \midrule
 \endhead
 \bottomrule
@@ -21,70 +21,82 @@
 \bottomrule
 \insertTableNotes\\
 \endlastfoot
-Constant                          & 14.371^{***}            & -8.700^{**}             & 14.020^{***}            \\
-                                  & (2.581)                 & (3.487)                 & (2.578)                 \\
-Year                              & -0.007^{***}            & 0.004^{**}              & -0.007^{***}            \\
-                                  & (0.001)                 & (0.002)                 & (0.001)                 \\
-Female                            & -0.289^{***}            & -0.293^{***}            & -0.293^{***}            \\
-                                  & (0.022)                 & (0.022)                 & (0.022)                 \\
-Education (years)                 & 0.078^{***}             & 0.078^{***}             & 0.079^{***}             \\
-                                  & (0.006)                 & (0.006)                 & (0.006)                 \\
-High School                       & 0.009                   & 0.004                   & 0.005                   \\
-                                  & (0.030)                 & (0.030)                 & (0.030)                 \\
-Bachelor                          & 0.304^{***}             & 0.292^{***}             & 0.290^{***}             \\
-                                  & (0.050)                 & (0.050)                 & (0.050)                 \\
-Graduate                          & 0.279^{***}             & 0.262^{***}             & 0.260^{***}             \\
-                                  & (0.065)                 & (0.066)                 & (0.066)                 \\
-Church Attendance                 & -0.055^{***}            & -0.053^{***}            & -0.054^{***}            \\
-                                  & (0.004)                 & (0.004)                 & (0.004)                 \\
-Family Income                     & 0.137^{***}             & 0.137^{***}             & 0.136^{***}             \\
-                                  & (0.012)                 & (0.012)                 & (0.012)                 \\
-Age                               & -0.362^{***}            & -0.375^{***}            & -0.373^{***}            \\
-                                  & (0.037)                 & (0.038)                 & (0.038)                 \\
-Age\textsuperscript{2}            & 0.035^{***}             & 0.036^{***}             & 0.036^{***}             \\
-                                  & (0.004)                 & (0.004)                 & (0.004)                 \\
-Independent                       & -0.061^{**}             & -0.043^{*}              & -0.040                  \\
-                                  & (0.026)                 & (0.026)                 & (0.026)                 \\
-Republican                        & 0.018                   & 0.058^{*}               & 0.053^{*}               \\
-                                  & (0.030)                 & (0.030)                 & (0.030)                 \\
-Moderate                          & -0.256^{***}            & 20.897^{***}            & -0.115^{*}              \\
-                                  & (0.028)                 & (3.671)                 & (0.059)                 \\
-Conservative                      & -0.269^{***}            & 45.225^{***}            & 0.051                   \\
-                                  & (0.030)                 & (3.833)                 & (0.063)                 \\
-Post-Reagan (1981--2021)          & -0.069^{*}              & -0.076^{**}             & 0.046                   \\
-                                  & (0.038)                 & (0.038)                 & (0.058)                 \\
-Bush (2001--2008)                 & -0.045                  & -0.040                  & 0.032                   \\
-                                  & (0.037)                 & (0.037)                 & (0.067)                 \\
-Post-Trump (2017--2021)           & 0.125^{*}               & 0.124^{*}               & 0.414^{***}             \\
-                                  & (0.064)                 & (0.065)                 & (0.111)                 \\
-COVID-19 (2020--2021)             & 0.150^{**}              & 0.145^{**}              & 0.642^{***}             \\
-                                  & (0.072)                 & (0.073)                 & (0.135)                 \\
-Year $\times$ Moderate            &                         & -0.011^{***}            &                         \\
-                                  &                         & (0.002)                 &                         \\
-Year $\times$ Conservative        &                         & -0.023^{***}            &                         \\
-                                  &                         & (0.002)                 &                         \\
-Moderate $\times$ Post-Reagan     &                         &                         & -0.098                  \\
-                                  &                         &                         & (0.069)                 \\
-Moderate $\times$ Bush            &                         &                         & -0.011                  \\
-                                  &                         &                         & (0.088)                 \\
-Moderate $\times$ Post-Trump      &                         &                         & -0.322^{**}             \\
-                                  &                         &                         & (0.144)                 \\
-Moderate $\times$ COVID-19        &                         &                         & -0.579^{***}            \\
-                                  &                         &                         & (0.181)                 \\
-Conservative $\times$ Post-Reagan &                         &                         & -0.256^{***}            \\
-                                  &                         &                         & (0.072)                 \\
-Conservative $\times$ Bush        &                         &                         & -0.210^{**}             \\
-                                  &                         &                         & (0.089)                 \\
-Conservative $\times$ Post-Trump  &                         &                         & -0.516^{***}            \\
-                                  &                         &                         & (0.149)                 \\
-Conservative $\times$ COVID-19    &                         &                         & -0.875^{***}            \\
-                                  &                         &                         & (0.187)                 \\
+Constant                            & 15.258^{***}                & -7.837                      & 2.237                       & 15.740^{***}                \\
+                                    & (5.395)                     & (5.888)                     & (6.760)                     & (5.390)                     \\
+Year                                & -0.008^{***}                & 0.004                       & -0.001                      & -0.008^{***}                \\
+                                    & (0.003)                     & (0.003)                     & (0.003)                     & (0.003)                     \\
+Female                              & -0.289^{***}                & -0.293^{***}                & -0.292^{***}                & -0.293^{***}                \\
+                                    & (0.022)                     & (0.022)                     & (0.022)                     & (0.022)                     \\
+Education (years)                   & 0.078^{***}                 & 0.078^{***}                 & 0.079^{***}                 & 0.079^{***}                 \\
+                                    & (0.006)                     & (0.006)                     & (0.006)                     & (0.006)                     \\
+High School                         & 0.009                       & 0.004                       & 0.003                       & 0.004                       \\
+                                    & (0.030)                     & (0.030)                     & (0.030)                     & (0.030)                     \\
+Bachelor                            & 0.304^{***}                 & 0.292^{***}                 & 0.287^{***}                 & 0.287^{***}                 \\
+                                    & (0.050)                     & (0.050)                     & (0.050)                     & (0.050)                     \\
+Graduate                            & 0.278^{***}                 & 0.262^{***}                 & 0.256^{***}                 & 0.256^{***}                 \\
+                                    & (0.065)                     & (0.066)                     & (0.066)                     & (0.066)                     \\
+Church Attendance                   & -0.055^{***}                & -0.053^{***}                & -0.053^{***}                & -0.053^{***}                \\
+                                    & (0.004)                     & (0.004)                     & (0.004)                     & (0.004)                     \\
+Family Income                       & 0.137^{***}                 & 0.137^{***}                 & 0.137^{***}                 & 0.136^{***}                 \\
+                                    & (0.012)                     & (0.012)                     & (0.012)                     & (0.012)                     \\
+Age                                 & -0.361^{***}                & -0.375^{***}                & -0.371^{***}                & -0.371^{***}                \\
+                                    & (0.037)                     & (0.038)                     & (0.038)                     & (0.038)                     \\
+Age\textsuperscript{2}              & 0.035^{***}                 & 0.036^{***}                 & 0.036^{***}                 & 0.036^{***}                 \\
+                                    & (0.004)                     & (0.004)                     & (0.004)                     & (0.004)                     \\
+Independent                         & -0.061^{**}                 & -0.043^{*}                  & -0.040                      & -0.038                      \\
+                                    & (0.026)                     & (0.026)                     & (0.026)                     & (0.026)                     \\
+Republican                          & 0.019                       & 0.058^{*}                   & 0.059^{*}                   & 0.059^{*}                   \\
+                                    & (0.030)                     & (0.030)                     & (0.030)                     & (0.030)                     \\
+Moderate                            & -0.256^{***}                & 20.894^{***}                & 6.799                       & -0.116^{**}                 \\
+                                    & (0.028)                     & (3.671)                     & (6.038)                     & (0.059)                     \\
+Conservative                        & -0.269^{***}                & 45.222^{***}                & 30.887^{***}                & 0.049                       \\
+                                    & (0.030)                     & (3.833)                     & (6.260)                     & (0.063)                     \\
+Post-Reagan (1981--2021)            & -0.063                      & -0.071                      & -0.071                      & 0.016                       \\
+                                    & (0.048)                     & (0.048)                     & (0.049)                     & (0.067)                     \\
+Bush (2001--2008)                   & -0.037                      & -0.033                      & -0.033                      & 0.088                       \\
+                                    & (0.054)                     & (0.054)                     & (0.054)                     & (0.079)                     \\
+Social Media Era (2010--2021)       & 0.013                       & 0.013                       & -108.536^{***}              & 0.181^{**}                  \\
+                                    & (0.070)                     & (0.070)                     & (32.050)                    & (0.087)                     \\
+Post-Trump (2017--2021)             & 0.125^{*}                   & 0.124^{*}                   & 0.137                       & 0.300^{**}                  \\
+                                    & (0.064)                     & (0.065)                     & (0.088)                     & (0.117)                     \\
+COVID-19 (2020--2021)               & 0.151^{**}                  & 0.146^{**}                  & 0.151^{*}                   & 0.645^{***}                 \\
+                                    & (0.072)                     & (0.073)                     & (0.083)                     & (0.136)                     \\
+Year $\times$ Moderate              &                             & -0.011^{***}                & -0.004                      &                             \\
+                                    &                             & (0.002)                     & (0.003)                     &                             \\
+Year $\times$ Conservative          &                             & -0.023^{***}                & -0.016^{***}                &                             \\
+                                    &                             & (0.002)                     & (0.003)                     &                             \\
+Year $\times$ Social Media          &                             &                             & 0.054^{***}                 &                             \\
+                                    &                             &                             & (0.016)                     &                             \\
+Moderate $\times$ S.M.E.            &                             &                             & 141.662^{***}               & -0.108                      \\
+                                    &                             &                             & (30.285)                    & (0.081)                     \\
+Conservative $\times$ S.M.E.        &                             &                             & 189.347^{***}               & -0.351^{***}                \\
+                                    &                             &                             & (31.129)                    & (0.084)                     \\
+Year $\times$ Mod. $\times$ S.M.E.  &                             &                             & -0.070^{***}                &                             \\
+                                    &                             &                             & (0.015)                     &                             \\
+Year $\times$ Cons. $\times$ S.M.E. &                             &                             & -0.094^{***}                &                             \\
+                                    &                             &                             & (0.015)                     &                             \\
+Moderate $\times$ Post-Reagan       &                             &                             &                             & -0.069                      \\
+                                    &                             &                             &                             & (0.072)                     \\
+Moderate $\times$ Bush              &                             &                             &                             & -0.040                      \\
+                                    &                             &                             &                             & (0.090)                     \\
+Moderate $\times$ Post-Trump        &                             &                             &                             & -0.245                      \\
+                                    &                             &                             &                             & (0.156)                     \\
+Moderate $\times$ COVID-19          &                             &                             &                             & -0.579^{***}                \\
+                                    &                             &                             &                             & (0.181)                     \\
+Conservative $\times$ Post-Reagan   &                             &                             &                             & -0.169^{**}                 \\
+                                    &                             &                             &                             & (0.075)                     \\
+Conservative $\times$ Bush          &                             &                             &                             & -0.299^{***}                \\
+                                    &                             &                             &                             & (0.092)                     \\
+Conservative $\times$ Post-Trump    &                             &                             &                             & -0.254                      \\
+                                    &                             &                             &                             & (0.161)                     \\
+Conservative $\times$ COVID-19      &                             &                             &                             & -0.876^{***}                \\
+                                    &                             &                             &                             & (0.187)                     \\
 \midrule
-Including Year 2021               & \multicolumn{1}{c}{Yes} & \multicolumn{1}{c}{Yes} & \multicolumn{1}{c}{Yes} \\
-AIC                               & 47517.387               & 47379.057               & 47353.256               \\
-BIC                               & 47678.763               & 47557.420               & 47582.580               \\
-Log Likelihood                    & -23739.694              & -23668.528              & -23649.628              \\
-Num. obs.                         & 36079                   & 36079                   & 36079                   \\
+Including Year 2021                 & \multicolumn{1}{c}{Yes}     & \multicolumn{1}{c}{Yes}     & \multicolumn{1}{c}{Yes}     & \multicolumn{1}{c}{Yes}     \\
+AIC                                 & \multicolumn{1}{c}{47,520}  & \multicolumn{1}{c}{47,382}  & \multicolumn{1}{c}{47,348}  & \multicolumn{1}{c}{47,341}  \\
+BIC                                 & \multicolumn{1}{c}{47,690}  & \multicolumn{1}{c}{47,568}  & \multicolumn{1}{c}{47,577}  & \multicolumn{1}{c}{47,596}  \\
+Log Likelihood                      & \multicolumn{1}{c}{-23,740} & \multicolumn{1}{c}{-23,669} & \multicolumn{1}{c}{-23,647} & \multicolumn{1}{c}{-23,640} \\
+Num. obs.                           & \multicolumn{1}{c}{36,080}  & \multicolumn{1}{c}{36,080}  & \multicolumn{1}{c}{36,080}  & \multicolumn{1}{c}{36,080}  \\
 \end{tabularx}
 \end{ThreePartTable}
 \end{center}

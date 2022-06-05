@@ -20,17 +20,11 @@ load("../data/models.RData")
 
 
 gss_pre_2021 <- gss %>%
-  filter(year < 2021)
+  filter(year < 2021) %>%
+  select(-covid19)
 
 gss_incl_2021 <- gss %>%
   select(-nonwhite, -south)
-
-
-gss_pre_2021_incl_post2010s <- gss_pre_2021 %>%
-  mutate(post2010s = ifelse(test = year >= 2010, yes = 1, no = 0))
-
-gss_incl_2021_incl_post2010s <- gss_incl_2021 %>%
-  mutate(post2010s = ifelse(test = year >= 2010, yes = 1, no = 0))
 
 
 # Source scripts ----------------------------------------------------------
@@ -101,9 +95,9 @@ survey_years <- c(
 
 ## Pre 2021 ---------------------------------------------------------------
 
-mean_polview_pre_2021 <- gss_pre_2021_incl_post2010s %>%
+mean_polview_pre_2021 <- gss_pre_2021 %>%
   group_by(moderate, conservative) %>%
-  summarise(across(c(year, female:posttrump, post2010s), ~ mean(.x))) %>%
+  summarise(across(c(year, female:posttrump), ~ mean(.x))) %>%
   ungroup() %>%
   mutate(
     polview = case_when(
@@ -153,9 +147,9 @@ predict_polview_pre_2021
 
 ## Including 2021 ---------------------------------------------------------
 
-mean_polview_incl_2021 <- gss_incl_2021_incl_post2010s %>%
+mean_polview_incl_2021 <- gss_incl_2021 %>%
   group_by(moderate, conservative) %>%
-  summarise(across(c(year, female:covid19, post2010s), ~ mean(.x))) %>%
+  summarise(across(c(year, female:covid19), ~ mean(.x))) %>%
   ungroup() %>%
   mutate(
     polview = case_when(
@@ -207,9 +201,9 @@ predict_polview_incl_2021
 
 ## Pre 2021 ---------------------------------------------------------------
 
-mean_polview_posttrump_pre_2021 <- gss_pre_2021_incl_post2010s %>%
+mean_polview_posttrump_pre_2021 <- gss_pre_2021 %>%
   group_by(moderate, conservative, posttrump) %>%
-  summarise(across(c(year, female:bush, post2010s), ~ mean(.x))) %>%
+  summarise(across(c(year, female:socialmedia), ~ mean(.x))) %>%
   ungroup() %>%
   mutate(
     polview = case_when(
@@ -331,9 +325,9 @@ prediction_polview_year_plot <- function(data, model, including2021) {
 
 ## Pre 2021 ---------------------------------------------------------------
 
-mean_polview_year_pre_2021 <- gss_pre_2021_incl_post2010s %>%
+mean_polview_year_pre_2021 <- gss_pre_2021 %>%
   group_by(moderate, conservative, year) %>%
-  summarise(across(c(female:posttrump, post2010s), ~ mean(.x))) %>%
+  summarise(across(c(female:posttrump), ~ mean(.x))) %>%
   ungroup() %>%
   mutate(
     polview = as.factor(
@@ -396,9 +390,9 @@ for (i in c("1", "2", "2_variation", "3")) {
 
 ## Including 2021 ---------------------------------------------------------
 
-mean_polview_year_incl_2021 <- gss_incl_2021_incl_post2010s %>%
+mean_polview_year_incl_2021 <- gss_incl_2021 %>%
   group_by(moderate, conservative, year) %>%
-  summarise(across(c(female:covid19, post2010s), ~ mean(.x))) %>%
+  summarise(across(female:covid19, ~ mean(.x))) %>%
   ungroup() %>%
   mutate(
     polview = as.factor(

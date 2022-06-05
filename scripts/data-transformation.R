@@ -329,6 +329,23 @@ summary(gss_with_na$bush)
 var_label(gss_with_na$bush) <- "bush (2001-2008) dummy"
 
 
+# Create "socialmedia" variable -------------------------------------------
+
+# Create a binary "socialmedia" variable indicating the decade of 2010 and after
+# when social media significantly increased its popularity.
+
+gss_with_na <- gss_with_na %>%
+  # Create new column conditional on the year column
+  mutate(
+    socialmedia = if_else(year >= 2010, 1, 0)
+  )
+
+summary(gss_with_na$socialmedia)
+
+# Add variable label
+var_label(gss_with_na$socialmedia) <- "socialmedia (since 2010) dummy"
+
+
 # Create "posttrump" variable ---------------------------------------------
 
 # Create a binary "posttrump" variable indicating the years of and after

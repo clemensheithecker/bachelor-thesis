@@ -301,7 +301,7 @@ summary_stats <- function(df, binary_dummies, variable_names) {
 
 # Summary statistics for 1974-2021 (without missing values)
 gss_stats <- gss %>%
-  select(consci:cohort) %>%
+  select(consci:covid19) %>%
   summary_stats(
     df = .,
     binary_dummies = c(
@@ -318,6 +318,7 @@ gss_stats <- gss %>%
       "conservative",
       "postreagan",
       "bush",
+      "socialmedia",
       "posttrump",
       "covid19"
     ),
@@ -339,16 +340,16 @@ gss_stats <- gss %>%
       "Conservative" = "conservative",
       "Post-Reagan (1981--2021)" = "postreagan",
       "Bush (2001--2008)" = "bush",
+      "Social Media Era (2010--2021)" = "socialmedia",
       "Post-Trump (2017--2021)" = "posttrump",
-      "COVID-19 (2020--2021)" = "covid19",
-      "Cohort" = "cohort"
+      "COVID-19 (2020--2021)" = "covid19"
     )
   )
 
 # Summary statistics for 1974-2010 (without missing values)
 gss_stats_2010 <- gss %>%
   filter(year <= 2010) %>%
-  select(consci:cohort) %>%
+  select(consci:covid19) %>%
   summary_stats(
     df = .,
     binary_dummies = c(
@@ -365,6 +366,7 @@ gss_stats_2010 <- gss %>%
       "conservative",
       "postreagan",
       "bush",
+      "socialmedia",
       "posttrump",
       "covid19"
     ),
@@ -386,9 +388,9 @@ gss_stats_2010 <- gss %>%
       "Conservative" = "conservative",
       "Post-Reagan (1981--2021)" = "postreagan",
       "Bush (2001--2008)" = "bush",
+      "Social Media Era (2010--2021)" = "socialmedia",
       "Post-Trump (2017--2021)" = "posttrump",
-      "COVID-19 (2020--2021)" = "covid19",
-      "Cohort" = "cohort"
+      "COVID-19 (2020--2021)" = "covid19"
     )
   )
 
@@ -399,7 +401,7 @@ gss_stats_2010_na <- gss_with_na %>%
   filter(year <= 2010, is.na(realinc)) %>%
   # Drop all rows containing NA values except for income
   drop_na(-realinc) %>%
-  select(consci:cohort, -realinc) %>%
+  select(consci:covid19, -realinc) %>%
   summary_stats(
     df = .,
     binary_dummies = c(
@@ -416,6 +418,7 @@ gss_stats_2010_na <- gss_with_na %>%
       "conservative",
       "postreagan",
       "bush",
+      "socialmedia",
       "posttrump",
       "covid19"
     ),
@@ -436,9 +439,9 @@ gss_stats_2010_na <- gss_with_na %>%
       "Conservative" = "conservative",
       "Post-Reagan (1981--2021)" = "postreagan",
       "Bush (2001--2008)" = "bush",
+      "Social Media Era (2010--2021)" = "socialmedia",
       "Post-Trump (2017--2021)" = "posttrump",
-      "COVID-19 (2020--2021)" = "covid19",
-      "Cohort" = "cohort"
+      "COVID-19 (2020--2021)" = "covid19"
     )
   )
 
@@ -452,7 +455,7 @@ n_obs = nrow(gss)
 
 summary_stats_to_latex(
   df = gss_stats,
-  file = "../reports/figures/gss-stats.tex",
+  file = "../reports/figures/table-gss-stats.tex",
   title = paste0(
     "Descriptive Statistics, General Social Survey 1974 to 2021 ($N=",
     # Add thousands-separator comma mark
@@ -470,7 +473,7 @@ n_obs_2010 = nrow(gss %>% filter(year <= 2010))
 
 summary_stats_to_latex(
   df = gss_stats_2010,
-  file = "../reports/figures/gss-stats-2010.tex",
+  file = "../reports/figures/table-gss-stats-2010.tex",
   title = paste0(
     "Descriptive Statistics, General Social Survey 1974 to 2010 ($N=",
     # Add thousands-separator comma mark
@@ -490,7 +493,7 @@ n_obs_2010_na = nrow(gss_with_na %>%
 
 summary_stats_to_latex(
   df = gss_stats_2010_na,
-  file = "../reports/figures/gss-stats-2010-na.tex",
+  file = "../reports/figures/table-gss-stats-2010-na.tex",
   title = paste0(
     "Descriptive Statistics, General Social Survey 1974 to 2010 (Only Missing Values for Income, $N=",
     # Add thousands-separator comma mark

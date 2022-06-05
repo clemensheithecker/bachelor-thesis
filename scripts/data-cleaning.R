@@ -32,8 +32,7 @@ gss_variables <-
     "polviews",
     "attend",
     "consci",
-    "realinc",
-    "cohort"
+    "realinc"
   )
 
 
@@ -94,9 +93,9 @@ gss_with_na <- gss_with_na %>%
     "conservative",
     "postreagan",
     "bush",
+    "socialmedia",
     "posttrump",
-    "covid19",
-    "cohort"
+    "covid19"
   )
 
 glimpse(gss_with_na)

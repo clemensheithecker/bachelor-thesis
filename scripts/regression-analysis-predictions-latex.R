@@ -26,13 +26,6 @@ gss_incl_2021 <- gss %>%
   select(-nonwhite, -south)
 
 
-gss_pre_2021_incl_post2010s <- gss_pre_2021 %>%
-  mutate(post2010s = ifelse(test = year >= 2010, yes = 1, no = 0))
-
-gss_incl_2021_incl_post2010s <- gss_incl_2021 %>%
-  mutate(post2010s = ifelse(test = year >= 2010, yes = 1, no = 0))
-
-
 # Source scripts ----------------------------------------------------------
 
 # A script that creates two custom ggplot2 themes
@@ -183,9 +176,9 @@ prediction_polview_year_plot <- function(data) {
 
 ## Pre 2021 ---------------------------------------------------------------
 
-mean_polview_year_pre_2021 <- gss_pre_2021_incl_post2010s %>%
+mean_polview_year_pre_2021 <- gss_pre_2021 %>%
   group_by(moderate, conservative, year) %>%
-  summarise(across(c(female:posttrump, post2010s), ~ mean(.x))) %>%
+  summarise(across(c(female:posttrump), ~ mean(.x))) %>%
   ungroup() %>%
   mutate(
     polview = as.factor(
@@ -245,9 +238,9 @@ for (i in c("1", "2", "2_variation", "3")) {
 
 ## Including 2021 ---------------------------------------------------------
 
-mean_polview_year_incl_2021 <- gss_incl_2021_incl_post2010s %>%
+mean_polview_year_incl_2021 <- gss_incl_2021 %>%
   group_by(moderate, conservative, year) %>%
-  summarise(across(c(female:covid19, post2010s), ~ mean(.x))) %>%
+  summarise(across(c(female:covid19), ~ mean(.x))) %>%
   ungroup() %>%
   mutate(
     polview = as.factor(

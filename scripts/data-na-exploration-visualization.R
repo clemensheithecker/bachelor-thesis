@@ -91,10 +91,16 @@ plot_na_variable_year <- function(df, filename, title) {
     scale_color_manual(values = c("white" = "#ffffff",
                                   "black" = "#000000"),
                        guide = "none") +
-    scale_fill_manual(labels = c("fraction_missing" = "Missing",
-                                 "fraction_present" = "Present"),
-                      values = c("fraction_missing" = "#262626",
-                                 "fraction_present" = "#E5E5E5")) +
+    scale_fill_manual(
+      labels = c(
+        "fraction_missing" = "Missing",
+        "fraction_present" = "Present"
+      ),
+      values = c(
+        "fraction_missing" = theme_thesis_colors$basic$primary,
+        "fraction_present" = theme_thesis_colors$basic$tertiary
+      )
+    ) +
     labs(
       x = "",
       y = "",
@@ -165,7 +171,7 @@ plot_na_count <- na_variable %>%
   ggplot(mapping = aes(
     x = reorder(variable, desc(na_count)),
     y = na_count)) +
-  geom_col(fill = "#262626") +
+  geom_col(fill = theme_thesis_colors$basic$primary) +
   geom_text(mapping = aes(label = formatC(
     na_count, format = "d", big.mark = ",")), hjust = -0.125) +
   # Reverse the order of the y-column
@@ -242,10 +248,15 @@ plot_na_fraction <- na_variable %>%
             hjust = -0.125) +
   scale_y_discrete(limits = rev) +
   scale_x_continuous(labels = scales::percent) +
-  scale_fill_manual(labels = c("na_fraction" = "Missing",
-                               "not_na_fraction" = "Present"),
-                    values = c("na_fraction" = "#262626",
-                               "not_na_fraction" = "#E5E5E5")) +
+  scale_fill_manual(
+    labels = c(
+      "na_fraction" = "Missing",
+      "not_na_fraction" = "Present"),
+    values = c(
+      "na_fraction" = theme_thesis_colors$basic$primary,
+      "not_na_fraction" = theme_thesis_colors$basic$tertiary
+    )
+  ) +
   labs(
     x = "",
     y = "",
@@ -296,9 +307,9 @@ na_distribution <- gss_with_na %>%
          -age,
          -postreagan,
          -bush,
+         -socialmedia,
          -posttrump,
-         -covid19,
-         -cohort) %>%
+         -covid19) %>%
   gather(
     key = variable,
     value = value,
@@ -314,9 +325,9 @@ not_na_distribution <- gss %>%
          -age,
          -postreagan,
          -bush,
+         -socialmedia,
          -posttrump,
-         -covid19,
-         -cohort) %>%
+         -covid19) %>%
   gather(
     key = variable,
     value = value,
@@ -341,21 +352,26 @@ plot_na_distribution <- ggplot() +
                   fill = "Data With Missing Income Values"),
     width = 1) +
   facet_wrap(~ variable, scales = "free", nrow = 2) +
-  # facet_wrap(~variable, scales = "free") +
+  # facet_wrap(~ variable, scales = "free", nrow = 4) +
   scale_x_continuous(breaks = c(0, 1)) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
   scale_color_manual(
-    values = c("Data Without Missing Values" = "#737373",
-               "Data With Missing Income Values" = "#262626")
+    values = c(
+      "Data Without Missing Values" = theme_thesis_colors$basic$secondary,
+      "Data With Missing Income Values" = theme_thesis_colors$basic$primary
+    )
   ) +
   scale_linetype_manual(
     values = c("Data Without Missing Values" = "dashed",
                "Data With Missing Income Values" = "solid")
   ) +
   scale_fill_manual(
-    values = alpha(c("Data Without Missing Values" = "#E5E5E5",
-                     "Data With Missing Income Values" = "#737373"),
-                   0.2)
+    values = alpha(
+      c(
+        "Data Without Missing Values" = theme_thesis_colors$basic$tertiary,
+        "Data With Missing Income Values" = theme_thesis_colors$basic$secondary
+      ),
+      0.2)
   ) +
   labs(
     x = "Value",
@@ -376,7 +392,7 @@ plot_na_distribution <- ggplot() +
 plot_na_distribution
 
 ggsave(
-  filename = "../figures/missing-values-distribution-wide.png",
+  filename = "../figures/missing-values-distributions-wide.png",
   plot = plot_na_distribution,
   device = agg_png,
   res = 300,
