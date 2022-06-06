@@ -30,6 +30,13 @@ load("../data/gss-with-na.RData")
 load("../data/gss-raw.RData")
 
 
+# Number of observations survey year 2020/2021 ----------------------------
+
+nrow(gss %>% filter(year == 2021))
+
+# n = 2,163 observations
+
+
 # Summary statistics: confidence in scientific community ------------------
 
 # Check for tagged missing values

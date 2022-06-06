@@ -107,7 +107,7 @@ texreg_custom(
   # Use "path" instead of "file" when calling texreg_custom()
   path = "../reports/figures/table-logit-pre-2021.tex",
   stars = c(0.01, 0.05, 0.1),
-  custom.model.names = c("Model 1", "Model 2", "Model 2 Variation", "Model 3"),
+  custom.model.names = c("Model 1", "Model 2", "Model 2 Var.", "Model 3"),
   custom.coef.names = c(
     "Constant",
     "Year",
@@ -126,10 +126,10 @@ texreg_custom(
     "Republican",
     "Moderate",
     "Conservative",
-    "Post-Reagan (1981--2021)",
+    "Post-Reagan (1981--2018)",
     "Bush (2001--2008)",
-    "Social Media Era (2010--2021)",
-    "Post-Trump (2017--2021)",
+    "Social Media Era (2010--2018)",
+    "Post-Trump (2017--2018)",
     "Year $\\times$ Moderate",
     "Year $\\times$ Conservative",
     "Year $\\times$ Social Media",
@@ -172,7 +172,7 @@ texreg_custom(
     )
   ),
   # Don't incluce \\item in custom.note
-  custom.note = "%stars\\\\[0.6em]\n {\\it Note:} Mod., Cons., and S.M.E. are acronyms for moderate, conservative, and social media era, respectively. Numbers in parentheses represent standard errors. The reference category for political party affiliation is Democrat. The reference category for political ideology is liberal. Age\\textsuperscript{2} is a squared term.",
+  custom.note = "%stars\\\\[0.6em]\n {\\it Note:} Var., Mod., Cons., and S.M.E. are acronyms for variation, moderate, conservative, and social media era, respectively. Numbers in parentheses represent standard errors. The reference category for political party affiliation is Democrat. The reference category for political ideology is liberal. Age\\textsuperscript{2} is a squared term.",
   digits = 3,
   caption = "Logit Models Predicting Public Confidence in Science (I)",
   caption.above = TRUE,
@@ -264,7 +264,7 @@ texreg_custom(
   # Use "path" instead of "file" when calling texreg_custom()
   path = "../reports/figures/table-logit-incl-2021.tex",
   stars = c(0.01, 0.05, 0.1),
-  custom.model.names = c("Model 4", "Model 5", "Model 5 Variation", "Model 6"),
+  custom.model.names = c("Model 4", "Model 5", "Model 5 Var.", "Model 6"),
   custom.coef.names = c(
     "Constant",
     "Year",
@@ -435,7 +435,7 @@ texreg_custom(
   # Use "path" instead of "file" when calling texreg_custom()
   path = "../reports/figures/table-logit-pre-2021-margins.tex",
   stars = c(0.01, 0.05, 0.1),
-  custom.model.names = c("Model 1", "Model 2", "Model 2 Variation", "Model 3"),
+  custom.model.names = c("Model 1", "Model 2", "Model 2 Var.", "Model 3"),
   custom.coef.names = c(
     "Constant",
     "Year",
@@ -454,10 +454,10 @@ texreg_custom(
     "Republican",
     "Moderate",
     "Conservative",
-    "Post-Reagan (1981--2021)",
+    "Post-Reagan (1981--2018)",
     "Bush (2001--2008)",
-    "Social Media Era (2010--2021)",
-    "Post-Trump (2017--2021)",
+    "Social Media Era (2010--2018)",
+    "Post-Trump (2017--2018)",
     "Year $\\times$ Moderate",
     "Year $\\times$ Conservative",
     "Year $\\times$ Social Media",
@@ -627,7 +627,7 @@ texreg_custom(
   # Use "path" instead of "file" when calling texreg_custom()
   path = "../reports/figures/table-logit-incl-2021-margins.tex",
   stars = c(0.01, 0.05, 0.1),
-  custom.model.names = c("Model 4", "Model 5", "Model 5 Variation", "Model 6"),
+  custom.model.names = c("Model 4", "Model 5", "Model 5 Var.", "Model 6"),
   custom.coef.names = c(
     "Constant",
     "Year",
@@ -693,7 +693,7 @@ texreg_custom(
     )
   ),
   # Don't include \\item in custom.note
-  custom.note = '%stars\\\\[0.6em]\n {\\it Note:} Mod., Cons., and S.M.E. are acronyms for moderate, conservative, and social media era, respectively. The variables "Non-White" and "South" are excluded from Model 4, 5, and 6.',
+  custom.note = '%stars\\\\[0.6em]\n {\\it Note:} Var., Mod., Cons., and S.M.E. are acronyms for variation, moderate, conservative, and social media era, respectively. The variables "Non-White" and "South" are excluded from Model 4, 5, and 6.',
   digits = 3,
   override.coef = list(
     margins_model_4_table$AME,
