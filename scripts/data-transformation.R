@@ -1,21 +1,26 @@
 # Load libraries ----------------------------------------------------------
 
 # Manipulate metadata as variable and value labels
-library(labelled)
+require(labelled)
 
-library(tidyverse)
+require(tidyverse)
 
+
+# Transform variables -----------------------------------------------------
 
 glimpse(gss_with_na)
 
 
-# Variable "consci" transformation ----------------------------------------
+## consci variable --------------------------------------------------------
 
-# I only consider two cases for confidence in science namely whether an
-# individual shares "a great deal" of trust or not
+# I only consider two cases for confidence in science, namely whether an
+# individual indicates "a great deal" of trust or not
 
 levels(gss_with_na$consci)
 unique(gss_with_na$consci)
+
+# Get variable label
+consci_label <- var_label(gss_with_na$consci)
 
 # Change factor levels
 gss_with_na$consci <-
@@ -36,12 +41,18 @@ gss_with_na <- gss_with_na %>%
 glimpse(gss_with_na)
 
 # Add variable label
-var_label(gss_with_na$consci) <- "confidence in scientific community"
+var_label(gss_with_na$consci) <- consci_label
+
+# Clean up
+rm(consci_label)
 
 
-# Variable "sex" transformation -------------------------------------------
+## sex variable -----------------------------------------------------------
 
-# Transform "sex" into a binary female variable
+# Transform sex into a binary female variable
+
+levels(gss_with_na$sex)
+unique(gss_with_na$sex)
 
 # Change factor levels
 gss_with_na$sex <- recode_factor(gss_with_na$sex, `female` = 1, `male` = 0)
@@ -49,19 +60,19 @@ gss_with_na$sex <- recode_factor(gss_with_na$sex, `female` = 1, `male` = 0)
 gss_with_na <- gss_with_na %>%
   # Convert factor level to numeric
   mutate(sex = as.numeric(as.character(sex))) %>%
-  # Rename variable
+  # Rename variable from sex to female
   rename(female = sex)
 
 glimpse(gss_with_na)
 
 # Add variable label
-var_label(gss_with_na$female) <- "respondent's gender dummy"
+var_label(gss_with_na$female) <- "respondent's gender"
 
 
-# Variable "race" transformation ------------------------------------------
+## race variable ----------------------------------------------------------
 
-# I only consider two cases for race namely whether an individual is non-white
-# or not
+# I only consider two cases for race, namely whether an individual is non-white
+# or otherwise (white)
 
 levels(gss_with_na$race)
 unique(gss_with_na$race)
@@ -81,24 +92,28 @@ unique(gss_with_na$race)
 gss_with_na <- gss_with_na %>%
   # Convert factor level to numeric
   mutate(race = as.numeric(as.character(race))) %>%
-  # Rename variable
+  # Rename variable from race to nonwhite
   rename(nonwhite = race)
 
 glimpse(gss_with_na)
 
 # Add variable label
-var_label(gss_with_na$nonwhite) <- "respondent's race dummy"
+var_label(gss_with_na$nonwhite) <- "respondent's race"
 
 
-# Transform "educ" variable -----------------------------------------------
+## educ variable ----------------------------------------------------------
 
 glimpse(gss_with_na)
 unique(gss_with_na$educ)
 
+# Get variable label
+educ_label <- var_label(gss_with_na$educ)
+
 # Change factor levels
 gss_with_na$educ <- forcats::fct_recode(
   gss_with_na$educ,
-  "0" = "no formal schooling")
+  "0" = "no formal schooling"
+)
 
 unique(gss_with_na$educ)
 
@@ -109,13 +124,17 @@ gss_with_na <- gss_with_na %>%
 glimpse(gss_with_na)
 
 # Add variable label
-var_label(gss_with_na$educ) <- "highest year of school completed"
+var_label(gss_with_na$educ) <- educ_label
+
+# Clean up
+rm(educ_label)
 
 
-# Transform "degree" variable ---------------------------------------------
+## degree variable --------------------------------------------------------
 
-# Transform "degree" into multiple binary variables ("highschool", "bachelor",
-# and "graduate")
+
+# Transform degree variable into multiple binary variables (highschool,
+# bachelor, and graduate)
 
 levels(gss_with_na$degree)
 
@@ -126,22 +145,25 @@ gss_with_na <- gss_with_na %>%
     bachelor = if_else(degree == "bachelor's", 1, 0),
     graduate = if_else(degree == "graduate", 1, 0)
   ) %>%
-  # Remove "degree" column
+  # Remove degree column
   select(-degree)
 
 glimpse(gss_with_na)
 
 # Add variable labels
-var_label(gss_with_na$highschool) <- "r's highest degree dummy"
-var_label(gss_with_na$bachelor) <- "r's highest degree dummy"
-var_label(gss_with_na$graduate) <- "r's highest degree dummy"
+var_label(gss_with_na$highschool) <- "respondent's highest degree"
+var_label(gss_with_na$bachelor) <- "respondent's highest degree"
+var_label(gss_with_na$graduate) <- "respondent's highest degree"
 
 
-# Variable "region" transformation ----------------------------------------
+## region variable --------------------------------------------------------
 
-# Transform "region" into a binary South variable
+# Transform region into a binary south variable
 
 levels(gss_with_na$region)
+
+# Get variable label
+region_label <- var_label(gss_with_na$region)
 
 # Change factor levels
 gss_with_na$region <- recode_factor(
@@ -154,28 +176,38 @@ gss_with_na$region <- recode_factor(
   `east north central` = 0,
   `west north central` = 0,
   `mountain` = 0,
-  `pacific` = 0)
+  `pacific` = 0
+)
 
 levels(gss_with_na$region)
 
 gss_with_na <- gss_with_na %>%
   # Convert factor level to numeric
   mutate(region = as.numeric(as.character(region))) %>%
-  # Rename variable
+  # Rename variable from region to south
   rename(south = region)
 
 glimpse(gss_with_na)
 
 # Add variable label
-var_label(gss_with_na$south) <- "region of interview dummy"
+var_label(gss_with_na$south) <- region_label
+
+# Clean up
+rm(region_label)
 
 
-# Transform "attend" variable ---------------------------------------------
+## attend variable --------------------------------------------------------
 
-# Transform "attend" into a binary variable representing regular church
-# attendance ("nearly every week", "every week", and "several times a week")
+# Transform attend into a continuous variable representing frequency of church
+# attendance using the following order: ("never", "less than once a year",
+# "about once or twice a year", "2-3 times a year", "several times a year",
+# "about once a month", "nearly every week", "every week", and "several times a
+# week")
 
 levels(gss_with_na$attend)
+
+# Get variable label
+attend_label <- var_label(gss_with_na$attend)
 
 # Change factor levels
 gss_with_na$attend <- recode_factor(
@@ -188,7 +220,8 @@ gss_with_na$attend <- recode_factor(
   `about once a month` = 5,
   `nearly every week` = 6,
   `every week` = 7,
-  `several times a week` = 8)
+  `several times a week` = 8
+)
 
 levels(gss_with_na$attend)
 
@@ -199,21 +232,30 @@ gss_with_na <- gss_with_na %>%
 glimpse(gss_with_na)
 
 # Add variable label
-var_label(gss_with_na$attend) <- "how often r attends religious services dummy"
+var_label(gss_with_na$attend) <- attend_label
+
+# Clean up
+rm(attend_label)
 
 
-# Transform "realinc" variable --------------------------------------------
+## realinc variable -------------------------------------------------------
+
+# Get variable label
+realinc_label <- var_label(gss_with_na$realinc)
 
 # Standardize the z-scores of family income.
-
 gss_with_na <- gss_with_na %>%
-  # Scale "realinc" to have mean = 0 and standard deviation = 1
+  # Scale realinc to have mean = 0 and standard deviation = 1
   mutate(realinc = as.vector(scale(realinc)))
 
+# Add variable label
+var_label(gss_with_na$realinc) <- realinc_label
 
-# Transform "age" variable ------------------------------------------------
+# Clean up
+rm(realinc_label)
 
-glimpse(gss_with_na)
+
+## age variable -----------------------------------------------------------
 
 unique(gss_with_na$age)
 length(unique(gss_with_na$age))
@@ -222,6 +264,7 @@ table(gss_with_na$age)
 
 levels(gss_with_na$age)
 
+# Change level "89 or older" to 89
 levels(gss_with_na$age)[levels(gss_with_na$age) == "89 or older"] <- 89
 
 levels(gss_with_na$age)
@@ -229,7 +272,7 @@ levels(gss_with_na$age)
 gss_with_na <- gss_with_na %>%
   # Convert factor level to numeric
   mutate(age = as.numeric(as.character(age))) %>%
-  # Divide "age" by 10
+  # Divide age by 10
   mutate(age = age / 10)
 
 length(unique(gss_with_na$age))
@@ -238,83 +281,96 @@ length(unique(gss_with_na$age))
 var_label(gss_with_na$age) <- "respondent's age"
 
 
-# Transform "partyid" variable --------------------------------------------
+## partyid variable -------------------------------------------------------
 
-# Transform "partyid" into multiple binary variables ("independent" and
-# "republican")
+# Transform partyid into multiple binary variables (independent and republican)
 
 levels(gss_with_na$partyid)
+
+# Get variable label
+partyid_label <- var_label(gss_with_na$partyid)
 
 gss_with_na <- gss_with_na %>%
   # Create new columns conditional on partyid column
   mutate(
-    independent = if_else(partyid %in% c(
-      "independent, close to democrat",
-      "independent (neither, no response)",
-      "independent, close to republican"
-      ), 1, 0),
-    republican = if_else(partyid %in% c(
-      "not very strong republican",
-      "strong republican"
-      ), 1, 0)
+    independent = if_else(
+      partyid == "independent, close to democrat" |
+        partyid ==  "independent (neither, no response)" |
+        partyid == "independent, close to republican",
+      1, 0),
+    republican = if_else(
+      partyid == "not very strong republican" |
+        partyid == "strong republican",
+      1, 0)
   ) %>%
-  # Remove "partyid" column
+  # Remove observations where partyid is "other party"
+  filter(partyid != "other party") %>%
+  # Remove partyid column
   select(-partyid)
 
 glimpse(gss_with_na)
 
 # Add variable labels
-var_label(gss_with_na$independent) <- "political party affiliation dummy"
-var_label(gss_with_na$republican) <- "political party affiliation dummy"
+var_label(gss_with_na$independent) <- partyid_label
+var_label(gss_with_na$republican) <- partyid_label
+
+# Clean up
+rm(partyid_label)
 
 
-# Transform "polviews" variable -------------------------------------------
+## polviews variable ------------------------------------------------------
 
-# Transform "polviews" into multiple binary variables ("moderate" and
-# "conservative")
+# Transform polviews into multiple binary variables (moderate and conservative)
 
 levels(gss_with_na$polviews)
+
+# Get variable label
+polviews_label <- var_label(gss_with_na$polviews)
 
 gss_with_na <- gss_with_na %>%
   # Create new columns conditional on polviews column
   mutate(
     moderate = if_else(polviews == "moderate, middle of the road", 1, 0),
-    conservative = if_else(polviews %in% c(
-      "extremely conservative",
-      "conservative",
-      "slightly conservative"
-      ), 1, 0)
+    conservative = if_else(
+      polviews == "extremely conservative" |
+        polviews == "conservative" |
+        polviews == "slightly conservative",
+      1, 0)
   ) %>%
-  # Remove "polviews" column
+  # Remove polviews column
   select(-polviews)
 
 glimpse(gss_with_na)
 
 # Add variable labels
-var_label(gss_with_na$moderate) <- "think of self as liberal or conservative dummy"
-var_label(gss_with_na$conservative) <- "think of self as liberal or conservative dummy"
+var_label(gss_with_na$moderate) <- polviews_label
+var_label(gss_with_na$conservative) <- polviews_label
+
+# Clean up
+rm(polviews_label)
 
 
-# Create "postreagan" variable --------------------------------------------
+# postreagan variable -----------------------------------------------------
 
-# Create a binary "postreagan" variable indicating the years of and after
-# Ronald Reagan's presidency (years after 1980)
+# Create a binary postreagan variable indicating the years of and after Ronald
+# Reagan's presidency (years after 1980)
 
 gss_with_na <- gss_with_na %>%
   # Create new column conditional on the year column
   mutate(
-    postreagan = if_else(year > 1980, 1, 0)
+    postreagan = if_else(year >= 1981, 1, 0)
   )
 
 summary(gss_with_na$postreagan)
 
 # Add variable label
-var_label(gss_with_na$postreagan) <- "post-reagan (since 1981) dummy"
+var_label(gss_with_na$postreagan) <- "post-reagan era (since 1981)"
 
 
-# Create "bush" variable --------------------------------------------------
+## bush variable ----------------------------------------------------------
 
-# Create a binary "bush" variable indicating the years of George W. Bush's
+
+# Create a binary bush variable indicating the years of George W. Bush's
 # presidency (years between 2001 and 2008)
 
 gss_with_na <- gss_with_na %>%
@@ -326,13 +382,13 @@ gss_with_na <- gss_with_na %>%
 summary(gss_with_na$bush)
 
 # Add variable label
-var_label(gss_with_na$bush) <- "bush (2001-2008) dummy"
+var_label(gss_with_na$bush) <- "bush era (2001-2008)"
 
 
-# Create "socialmedia" variable -------------------------------------------
+## socialmedia variable ---------------------------------------------------
 
-# Create a binary "socialmedia" variable indicating the decade of 2010 and after
-# when social media significantly increased its popularity.
+# Create a binary socialmedia variable indicating the decade of 2010 and after,
+# when social media significantly increased its popularity
 
 gss_with_na <- gss_with_na %>%
   # Create new column conditional on the year column
@@ -343,38 +399,38 @@ gss_with_na <- gss_with_na %>%
 summary(gss_with_na$socialmedia)
 
 # Add variable label
-var_label(gss_with_na$socialmedia) <- "socialmedia (since 2010) dummy"
+var_label(gss_with_na$socialmedia) <- "social media era (since 2010)"
 
 
-# Create "posttrump" variable ---------------------------------------------
+# posttrump variable ------------------------------------------------------
 
-# Create a binary "posttrump" variable indicating the years of and after
-# Donald Trump's presidency (years after 2017)
+# Create a binary posttrump variable indicating the years of and after Donald
+# Trump's presidency and election (years after 2016)
 
 gss_with_na <- gss_with_na %>%
   # Create new column conditional on the year column
   mutate(
-    posttrump = if_else(year >= 2017, 1, 0)
+    posttrump = if_else(year >= 2016, 1, 0)
   )
 
 summary(gss_with_na$posttrump)
 
 # Add variable label
-var_label(gss_with_na$posttrump) <- "post-trump (since 2017) dummy"
+var_label(gss_with_na$posttrump) <- "post-trump era (since 2016)"
 
 
-# Create "covid19" variable -----------------------------------------------
+## covid19 variable -------------------------------------------------------
 
-# Create a binary "covid19" variable indicating the years of the COVID-19
-# pandemic (years after 2020 as of conducting this analysis)
+# Create a binary covid19 variable indicating the years of the COVID-19 pandemic
+# (years including and after 2020, as of conducting this analysis)
 
 gss_with_na <- gss_with_na %>%
   # Create new column conditional on the year column
   mutate(
-    covid19 = if_else(year > 2020, 1, 0)
+    covid19 = if_else(year >= 2020, 1, 0)
   )
 
 summary(gss_with_na$covid19)
 
 # Add variable label
-var_label(gss_with_na$covid19) <- "covid-19 (2020-2022) dummy"
+var_label(gss_with_na$covid19) <- "covid-19 era (2020-2022)"

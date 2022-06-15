@@ -51,7 +51,7 @@ glimpse(gss_raw)
 
 # Clean variables ---------------------------------------------------------
 
-# Transformed data with missing values
+# Create copy of data frame to become transformed data with missing values
 gss_with_na <- gss_raw
 
 # Convert variable labels to factors
@@ -66,7 +66,7 @@ glimpse(gss_with_na)
 
 # Suppress printed messages
 invisible(capture.output(
-  # A script that cleans and creates relevant variables
+  # Run script that that cleans data set and creates relevant variables
   source("data-transformation.R")))
 
 
@@ -103,6 +103,7 @@ glimpse(gss_with_na)
 
 # Remove records containing missing values --------------------------------
 
+# Create copy of data frame to become transformed data without missing values
 gss <- gss_with_na
 
 # Number of missing values in each column
@@ -111,12 +112,12 @@ sapply(gss, function(x) sum(is.na(x)))
 # Total number of observations in data set (with missing values)
 nrow(gss)
 
-# number of observations = 67895
+# Number of observations (with missing values) = 67,210
 
 # Omit observations with missing values in all years but 2021
-# Note: The GSS was conducted online in 2021 thus data on race and region is not
-# available. If I drop all records containing NA values, I would drop all 2021
-# records
+# Note: The GSS was conducted online in 2021. Thus, data on race and region is
+# not available. If I dropped all records containing NA values, I would drop all
+# 2021 records
 gss_pre_2021 <- gss %>%
   # Select all observations before 2021
   filter(year < 2021) %>%
@@ -137,16 +138,16 @@ sapply(gss_pre_2021, function(x) sum(is.na(x)))
 # Number of missing values in each column for gss_2021
 sapply(gss_2021, function(x) sum(is.na(x)))
 
-# Concatenate or combine gss_pre_2021 and gss_2021 dataframes
+# Concatenate or combine gss_pre_2021 and gss_2021 data frames
 gss <- rbind(gss_pre_2021, gss_2021)
+
+# Clean up
+rm(gss_pre_2021, gss_2021)
 
 # Total number of observations in data set (without missing values)
 nrow(gss)
 
-# number of observations = 35940
-
-# Remove temporary data frames
-rm(gss_pre_2021, gss_2021)
+# Number of observations (without missing values) = 35,427
 
 
 # Save cleaned GSS data ---------------------------------------------------
